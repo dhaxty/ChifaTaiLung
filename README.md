@@ -80,8 +80,6 @@ ChifaTaiLung/
 4. Verifica que el JDK configurado sea compatible con el `pom.xml`.
 5. Ejecuta el proyecto desde NetBeans. Si no hay una clase principal configurada, selecciona `chifatailung.app.Main`.
 
-Reemplaza `TU_USUARIO` por el nombre de usuario real de GitHub.
-
 ## Capturas de pantalla
 
 Las capturas de las interfaces de inicio de sesión y menú principal se incorporarán conforme avance el proyecto.
