@@ -6,6 +6,22 @@ El proyecto busca facilitar la organización de las operaciones del restaurante 
 
 > **Estado del proyecto:** en desarrollo. Actualmente se han creado los formularios gráficos de inicio de sesión y menú principal. Las demás funcionalidades descritas a continuación forman parte del alcance previsto y no deben interpretarse como implementadas.
 
+## Capturas de pantalla
+
+A continuación, se muestran las interfaces gráficas desarrolladas para el sistema de gestión **Chifa Tai Lung**, utilizando Java Swing.
+
+### Inicio de sesión
+
+Interfaz de autenticación diseñada para permitir el acceso de administradores y empleados al sistema.
+
+![Formulario de inicio de sesión](screenshots/login.png)
+
+### Menú principal
+
+Panel principal del sistema, diseñado para facilitar la navegación entre los diferentes módulos de gestión del restaurante.
+
+![Formulario del menú principal](screenshots/principal.png)
+
 ## Funcionalidades
 
 ### Interfaces desarrolladas
