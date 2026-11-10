@@ -1,0 +1,606 @@
+# AGENTS.md — Sistema de Gestión de Chifa (PF_GrupoXX)
+
+Prototipo académico de escritorio en **Java + Java Swing (Apache NetBeans)** para el
+curso *Algoritmos y Estructuras de Datos* (UTP, 2026-II). Simula la atención y el
+consumo dentro de un chifa peruano usando estructuras de datos implementadas a mano.
+No es un sistema comercial ni está conectado a nada.
+
+Equipo (3 integrantes): **Steve**, **Fabiano** y **Alexander**.
+
+**Este archivo es autosuficiente.** Contiene el alcance, las reglas, los contratos,
+el reparto de trabajo y el código de referencia del profesor (Apéndice A). No se
+asume que existan otros documentos en el repositorio.
+
+> Lo primero que debe hacer un agente: **averiguar para quién trabaja** (Steve,
+> Fabiano o Alexander) y limitarse a los archivos de esa persona (sección 8).
+> Si no se lo dicen, preguntar.
+
+---
+
+## 1. Principio rector
+
+El profesor exige que el proyecto final siga **su forma de programar**: mismos
+nombres de variables, misma estructura de clases y mismo estilo para resolver
+algoritmos. Se evalúa el apego a ese estilo, no solo que el programa funcione.
+El estilo está descrito en la sección 7 y demostrado en el Apéndice A.
+
+---
+
+## 2. Arquitectura
+
+Monolito modular, **MVC con capas**. Dirección de dependencias:
+
+```
+vista → controlador → estructuras (TAD) → modelo
+```
+
+- Las estructuras de datos **no importan Swing** ni hacen E/S.
+- Cada módulo funciona **de forma independiente**: no necesita datos de otro.
+  Cada formulario tiene su botón **«Cargar datos de prueba»**. Se comparten las
+  *clases*, nunca las *instancias*. Sin estáticos globales compartidos.
+- Los controladores **también validan permisos**; ocultar botones no basta.
+
+Paquete base `pe.edu.utp.chifa`:
+
+```
+app/          Main.java
+modelo/       Plato, Mesa, EstadoMesa, Usuario, Rol, Pedido, DetallePedido,
+              ClienteAtencion, Prioridad, Comprobante
+estructuras/
+  arreglos/   cArregloPlatos
+  matrices/   cMatrizMesas
+  listas/     cNodoPedido, cListaPedidos
+  colas/      cNodoCola, cColaPrioridad
+  pilas/      cPilaComprobantes
+  arboles/    cNodoABB, cABBPlatos
+controlador/  AuthController, AutenticacionService, PlatoController,
+              MesaController, PedidoController, AtencionController,
+              ComprobanteController, ArbolController
+vista/        FrmLogin, FrmPrincipal, FrmPlatos, FrmMesas, FrmPedidos,
+              FrmAtencion, FrmComprobantes, FrmArbol
+pruebas/      (opcional) clases Main de consola por TAD, estilo del profesor
+```
+
+### Mapa funcional
+
+| Módulo | Estructura | Límite |
+|---|---|---|
+| Carta | `Plato[]` | 50 platos; códigos automáticos `P001`, `P002`… sin reutilizar |
+| Mesas | `Mesa[][]` | 16 mesas, matriz 4 × 4 |
+| Pedidos | lista enlazada simple | hasta 10 detalles por pedido |
+| Atención | cola con prioridad | preferencial antes que regular; FIFO por nivel |
+| Comprobantes | pila estática | capacidad 50 |
+| Búsqueda | ABB por nombre | sin nombres duplicados |
+
+---
+
+## 3. Restricciones duras (de la consigna)
+
+- Sin base de datos ni servicios externos. Sin persistencia.
+- **Prohibido:** `ArrayList`, `LinkedList`, `Stack`, `Queue`, `PriorityQueue`,
+  `Arrays.sort()` y cualquier algoritmo predefinido para las operaciones exigidas.
+- **Recursividad solo en el ABB.** Arreglo, matriz, lista, cola y pila: iterativos.
+- Los `JTable` pueden mostrar resultados, pero los algoritmos no se delegan a
+  colecciones de Java.
+- Usuarios: `ADMIN` y `EMPLEADO`, con usuario y contraseña locales (dos cuentas
+  de prueba), sin persistencia.
+
+---
+
+## 4. Modelo de dominio
+
+Las entidades **no llevan prefijo `c`** (el profesor no tiene ejemplos de ellas).
+Enums: `Rol { ADMIN, EMPLEADO }`, `EstadoMesa { LIBRE, OCUPADA, RESERVADA }`,
+`Prioridad` (preferencial = 1, regular = 2).
+
+| Clase | Atributos | Reglas |
+|---|---|---|
+| `Usuario` | `usuario: String`, `claveHash: String`, `rol: Rol` | dos cuentas locales |
+| `Plato` | `codigo`, `nombre`, `categoria: String`, `precio: double`, `disponible: boolean` | código `P001`…; no reutilizar en la sesión |
+| `Mesa` | `numero`, `capacidad`, `fila`, `columna: int`, `estado: EstadoMesa` | cambio de estado manual |
+| `Pedido` | `numero`, `nombreCliente: String`, `numeroMesa: int`, `detalles: DetallePedido[10]`, `cantidadDetalles: int` | id único; mesa entre 1 y 16 sin ocupar la matriz |
+| `DetallePedido` | `codigoPlato`, `nombrePlato: String`, `cantidad: int`, `precioUnitario: double` | `subtotal = cantidad × precioUnitario`; no consulta la carta |
+| `ClienteAtencion` | `numeroTurno: int`, `nombreCliente: String`, `prioridad: Prioridad`, `ordenLlegada: long` | sin cambios automáticos de prioridad |
+| `Comprobante` | `numero`, `concepto`, `tipo: String`, `importe: double` | simulado, no tributario |
+
+Relaciones: `Pedido 1 —— 0..10 DetallePedido` (composición) con
+`agregarDetalle()`, `editarDetalle()`, `quitarDetalle()`, `calcularTotal()`
+(recorre solo `cantidadDetalles`, no las 10 posiciones). Actualizar un pedido
+no cambia su identificador. Sin herencia ni interfaces propias.
+
+**Validaciones:** textos obligatorios, identificadores únicos, cantidad mínima 1,
+precio no negativo, límites de capacidad, estados válidos. Un error de entrada se
+muestra sin modificar la estructura.
+
+### Permisos
+
+| Funcionalidad | Administrador | Empleado |
+|---|---|---|
+| Carta de platos | insertar, editar, eliminar, consultar | consultar |
+| Mesas, pedidos, cola, pila | todo | todo |
+| ABB de platos | insertar, buscar, visualizar | buscar, visualizar |
+
+---
+
+## 5. Contratos de las estructuras
+
+Los nombres siguen al profesor donde él tiene ejemplo equivalente. Estos nombres
+son el **contrato entre personas**: no cambiarlos sin avisar al equipo, porque los
+controladores de unos llaman a las estructuras de otros y Steve los usa desde
+las vistas.
+
+| Clase | Métodos públicos mínimos |
+|---|---|
+| `cArregloPlatos` (`Plato[50]`) | `registrar(...): String` (devuelve el código) · `actualizar(codigo, ...): boolean` · `eliminar(codigo): boolean` (corrimiento manual) · `buscar(codigo): Plato` · `listar(): Plato[]` · `muestraArreglo(): String` |
+| `cMatrizMesas` (`Mesa[4][4]`) | `obtener(fila, columna): Mesa` · `cambiarEstado(numero, estado): boolean` · `contar(estado): int` · `listar(): Mesa[][]` |
+| `cListaPedidos` + `cNodoPedido` | `insertar(Pedido): boolean` · `actualizar(id, Pedido): boolean` · `eliminar(id): boolean` · `buscar(id): Pedido` · `listar(): Pedido[]` · `totalGeneral(): double` |
+| `cColaPrioridad` + `cNodoCola` | `incluir(ClienteAtencion): void` · `eliminar(): ClienteAtencion` · `acceso(): ClienteAtencion` · `colaVacia()` · `listar(): ClienteAtencion[]` |
+| `cPilaComprobantes` (`Comprobante[50]`) | `insertar(Comprobante): boolean` · `eliminar(): Comprobante` · `accesar(): Comprobante` · `pilaVacia()` · `listar(): Comprobante[]` · `muestraArreglo(): String` |
+| `cABBPlatos` + `cNodoABB` | `ingresarValor(Plato): boolean` · `insertaNodo(p, nuevo)` · `buscarSecuencial(String): Plato` · `buscarIndexada(String): Plato` · `enOrden(): Plato[]` · `recorreArbol(int opcion): String` |
+
+Los nombres de método del profesor reemplazan a los que aparecían en la
+consigna original: `apilar/desapilar/verTope` → `insertar/eliminar/accesar`;
+`encolar/desencolar/verSiguiente` → `incluir/eliminar/acceso`;
+`insertar` del ABB → `ingresarValor`.
+
+### Adaptaciones obligatorias (donde la consigna manda sobre el ejemplo)
+
+- **`listar()` que devuelve arreglo.** El profesor solo devuelve `String`
+  (`muestraArreglo()`, `recorreArreglo()`, `recorreArbol()`). Los `JTable`
+  necesitan arreglos de objetos, así que cada estructura ofrece `listar()` para
+  los controladores y, cuando convenga, el método `String` para pruebas de consola.
+- **Estados lleno/vacío con objetos.** El profesor devuelve `0` con `int`.
+  Con objetos: `null` si está vacía y `false` si está llena. Nunca excepciones.
+- **ABB sin duplicados.** El profesor manda iguales a la izquierda. Aquí se
+  compara con `compareToIgnoreCase` y se rechaza (`return false`) antes de insertar.
+- **Búsquedas del ABB.** El profesor no tiene ejemplo. `buscarSecuencial` recorre
+  todos los nodos sin usar el orden; `buscarIndexada` compara nombres y baja a
+  izquierda o derecha. Interpretación **provisional** hasta preguntar al profesor.
+- **Cola con prioridad.** La cola del profesor es lineal sobre arreglo de `int`.
+  La nuestra usa nodos enlazados ordenados por prioridad, con FIFO estable por
+  nivel (`ordenLlegada`). Esa parte es nuestra: marcar `// [EXTRAPOLADO]`.
+- **Pila.** Copiar la mecánica de `cPila` (`tope = -1`, `indMax = n - 1`),
+  cambiando `int[]` por `Comprobante[]`.
+
+---
+
+## 6. Qué tiene y qué no tiene referencia del profesor
+
+| Módulo | Referencia en el Apéndice A |
+|---|---|
+| Pila de comprobantes | Directa: `cPila` |
+| ABB (inserción y recorridos) | Directa: `cABB` + `cNodo` |
+| Cola con prioridad | Parcial: `cCola` (cola lineal; la prioridad es nuestra) |
+| Búsquedas del ABB | Ninguna |
+| Arreglo de objetos con CRUD | Ninguna |
+| Lista enlazada | Ninguna (reutilizar `p`, `nuevo` y el estilo de `cNodo`) |
+| Matriz | Ninguna |
+| Formularios Swing | Ninguna (los ejemplos del profesor son de consola) |
+
+Donde no hay referencia: extrapolar el estilo de la sección 7 y marcar con
+`// [EXTRAPOLADO]` para poder consultarlo con el profesor.
+
+---
+
+## 7. Estilo de código del profesor
+
+Deducido de sus archivos (7 en total: `cPila`, `cCola`, `cNodo`, `cABB` y tres
+clases de prueba). El código en que se basa está en el Apéndice A.
+
+- **Clases de estructuras y nodos:** prefijo `c` + PascalCase (`cPila`, `cNodo`).
+- **Instancias locales:** prefijo `o` (`oPila`, `oABB`), con sufijo de rol si hay
+  varias (`oPilaP`, `oPilaI`).
+- **Clases de prueba:** `Main` + nombre del TAD, o `Ejercicio` + número.
+- **Atributos** `private`; varios en una línea (`private cNodo raiz, nuevo,p;`);
+  arreglos al estilo C (`private int pila[];`).
+- **Variables canónicas:** `tope` y `first`/`last` (−1 = vacío), `raiz` (null =
+  vacío), `p` (puntero móvil), `nuevo` (nodo recién creado), `cadena`
+  (acumulador de texto), `valor`, `n` (capacidad), `indMax`, `i`, `izq`, `der`.
+- **Español** para operaciones y nombres. Excepción: `first`/`last`.
+- **Sin excepciones** (`throw`, `try/catch`) en las estructuras: retornos
+  silenciosos o centinelas.
+- **Sin `toString()`:** métodos con nombre de acción que devuelven `String` con
+  separador `" - "`.
+- **Estructuras puras:** cero `System.out`, `Scanner` o `JOptionPane`. Solo las
+  clases `Main` imprimen, con `System.out.println`, usando datos escritos a mano.
+- **Orden de la clase:** atributos → constructor → método de vaciado
+  (`pilaVacia()`, `colaVacia()`) → operaciones → visualización/recorridos.
+- **Constructor** con arreglo: recibe `n`, crea el arreglo, calcula el límite y
+  llama a su método de vaciado. El nodo: constructor con el dato, getters y
+  setters completos con `this.`.
+- **Formato:** llaves en la misma línea, 4 espacios, `if` de una sola sentencia
+  sin llaves, varias sentencias cortas en una línea, casi sin comentarios (solo
+  cierres como `// fin inserta nodo`).
+- **Métodos recursivos del ABB:** públicos, como en el original.
+- **Corte de ejecución:** si la estructura está llena o vacía, el método termina
+  en silencio sin mensaje.
+- **El profesor no usa** genéricos, interfaces propias, `final`, constantes ni
+  enums. En nuestro proyecto sí se requieren enums y una constante de capacidad:
+  usar convención Java normal y marcar `// [EXTRAPOLADO]`.
+
+---
+
+## 8. Reparto de trabajo
+
+> Steve hace **todos los formularios JFrame**, por eso tiene la parte lógica más
+> liviana y la matriz de mesas la hace Fabiano. Si el grupo decide otro reparto,
+> cambiar solo esta sección.
+
+### Steve — Vistas + carta + acceso (16 archivos)
+
+**Formularios JFrame (8):** `FrmLogin`, `FrmPrincipal`, `FrmPlatos`, `FrmMesas`,
+`FrmPedidos`, `FrmAtencion`, `FrmComprobantes`, `FrmArbol`.
+
+**Lógica propia (8):** `Plato`, `Usuario`, `Rol`, `cArregloPlatos`,
+`PlatoController`, `AutenticacionService`, `AuthController`, `Main`.
+
+Entrega: CRUD del arreglo, login con dos cuentas, permisos por rol, menú
+principal con los nombres de los integrantes, y que los 8 formularios abran de
+forma independiente.
+
+### Fabiano — Pedidos, comprobantes y mesas (12 archivos)
+
+`Pedido`, `DetallePedido`, `cNodoPedido`, `cListaPedidos`, `PedidoController`,
+`Comprobante`, `cPilaComprobantes`, `ComprobanteController`,
+`Mesa`, `EstadoMesa`, `cMatrizMesas`, `MesaController`.
+
+Entrega: CRUD de lista simple con máximo 10 detalles y total general; pila
+estática con vacío/lleno; matriz 4 × 4 con cambio de estados.
+
+### Alexander — Atención y búsqueda (8 archivos)
+
+`ClienteAtencion`, `Prioridad`, `cNodoCola`, `cColaPrioridad`, `AtencionController`,
+`cNodoABB`, `cABBPlatos`, `ArbolController`.
+
+Entrega: cola estable por prioridad; ABB con inserción sin duplicados,
+búsqueda secuencial e indexada, y recorrido en orden.
+
+### Dependencias entre personas
+
+- `Plato` y `Rol` los escribe **Steve**; los usan Alexander (`cABBPlatos` guarda
+  `Plato`) y los controladores de todos. Steve los sube primero. Mientras no
+  estén, el agente puede crear una versión mínima provisional con los atributos
+  de la sección 4 y avisar para reemplazarla.
+- Cada controlador recibe el `Rol` vigente en su constructor
+  (`new PlatoController(rol)`). `FrmPrincipal` lo pasa a cada formulario y este
+  al controlador. **[PROPUESTA]**
+- Los controladores validan y devuelven un `String` con el mensaje de error
+  (`""` si todo salió bien), para que el formulario lo muestre sin excepciones.
+  **[PROPUESTA]**
+- Cada controlador ofrece `cargarDatosPrueba()` para el botón del formulario.
+  **[PROPUESTA]**
+- Steve necesita **esqueletos de los controladores** de Fabiano y Alexander
+  (firmas públicas, aunque sin lógica) en los primeros días para avanzar con las
+  vistas. Fabiano y Alexander los entregan antes que la lógica real.
+
+---
+
+## 9. Reglas para los formularios Swing (Steve)
+
+- Se crean como **JFrame Form en NetBeans**. **No editar** los bloques generados
+  (`// <editor-fold ... Generated Code>`, `initComponents()`); escribir manejadores
+  de eventos y lógica fuera de ellos.
+- Los formularios **no contienen lógica de estructuras**: solo leen campos, llaman
+  al controlador y refrescan `JTable`/etiquetas.
+- Cada formulario crea su **propio** controlador y estructura; no comparte
+  instancias con otro. Debe abrir directo desde `FrmPrincipal` sin datos previos.
+- Nombrar componentes con significado (`txtNombre`, `btnRegistrar`,
+  `tblPlatos`), no `jTextField1`. **[PROPUESTA]**
+- Mostrar errores de validación con mensaje; nunca dejar la estructura a medias.
+- Ocultar o deshabilitar botones según el rol, **además** de la validación del
+  controlador.
+- Los diseños de pantalla (`FrmLoginDesign.png`, `FrmMesas.png`,
+  `FrmPrincipal.png`) los tiene Steve localmente; si no están disponibles, el
+  agente debe pedirlos en lugar de inventar el diseño.
+
+---
+
+## 10. Pruebas de aceptación
+
+| Módulo | Debe demostrarse |
+|---|---|
+| Carta | insertar, actualizar, eliminar, listar; arreglo vacío y lleno (50/50); código automático; borrado con corrimiento |
+| Mesas | cambios entre libre, ocupada y reservada |
+| Pedidos | insertar, modificar, eliminar, listar; pedido con 10 detalles; rechazo del detalle 11; subtotal y total general correctos |
+| Cola | preferencial antes que regular; FIFO dentro de cada nivel |
+| Pila | apilar, desapilar y consultar tope; pila vacía y llena |
+| ABB | insertar y rechazar nombres repetidos sin distinguir mayúsculas; ambas búsquedas; restricciones del empleado |
+| Independencia | abrir cada módulo directo y usar «Cargar datos de prueba» sin depender de otro; rol administrador para operaciones restringidas |
+
+Recomendado: probar primero cada estructura por consola (clase `Main...` al
+estilo del profesor) antes de conectarla a la interfaz.
+
+---
+
+## 11. Entrega y exposición
+
+- Revisión de avance: semana 14 (≈ 60 %).
+- Pruebas integradas: antes del 26 de noviembre de 2026.
+- **Entrega final: domingo 29 de noviembre de 2026, 23:59.**
+- Exposiciones: desde el lunes 30 de noviembre, máximo 20 minutos con preguntas.
+- Nombre base del documento y proyecto: `PF_GrupoXX`.
+- **Cada integrante sube:** informe Word, presentación PowerPoint y software con
+  código fuente.
+
+Orden obligatorio de la rúbrica: formulario principal y nombres (2) → arreglo de
+objetos (3) → lista enlazada (3) → cola con prioridades (3) → pila (2) → ABB con
+búsqueda secuencial e indexada (3) → preguntas (4). La matriz se presenta como
+complemento sin romper ese orden.
+
+Todos deben poder explicar **todos** los algoritmos: se harán preguntas
+individuales.
+
+---
+
+## 12. Pendientes por confirmar con el profesor
+
+1. Qué entiende por **búsqueda indexada** en el ABB.
+2. Si las entidades (`Plato`, `Mesa`…) también llevan prefijo `c`.
+3. Si se puede usar la `ñ` (`tamaño`) o conviene `tamano`.
+4. Cómo se reparten las preguntas de la rúbrica con 3 integrantes en lugar de 4.
+5. Registrar versiones de JDK, Apache NetBeans y sistema de construcción
+   (Maven o Ant) para la carátula del informe.
+
+---
+
+## 13. Cómo debe trabajar un agente en este repositorio
+
+1. Identificar para quién trabaja (Steve, Fabiano o Alexander) y **tocar solo
+   sus archivos**. Si necesita cambiar algo de otra persona, avisar en lugar de
+   editarlo.
+2. Trabajar **un módulo a la vez**.
+3. Antes de cada algoritmo, indicar en qué ejemplo del Apéndice A se basa. Si no
+   hay ejemplo, marcar `// [EXTRAPOLADO]`.
+4. Explicar cada algoritmo en 3 o 4 líneas: el alumno debe poder sustentarlo
+   oralmente.
+5. No inventar convenciones, no agregar dependencias, frameworks ni archivos
+   fuera del alcance. No cambiar firmas de la sección 5 sin avisar.
+6. Verificar que el código cumple las restricciones de la sección 3 y el estilo
+   de la sección 7, y reportar cualquier incumplimiento.
+7. Si algo no está claro, preguntar.
+
+---
+
+## Apéndice A — Código de referencia del profesor
+
+Estos fragmentos son la base del estilo. Los marcados **[ORIGINAL]** están copiados
+de los archivos de clase. Los marcados **[RECONSTRUIDO]** se armaron a partir de
+una descripción del original y pueden diferir en detalles; sirven para ver la
+forma, no para copiar literalmente.
+
+### A.1. Pila (`cPila`) — estructura sobre arreglo
+
+**[RECONSTRUIDO]** atributos, constructor y vaciado:
+
+```java
+public class cPila {
+    private int pila[];
+    private int tope;
+    private int indMax;
+    public int getTope(){
+        return tope;
+    }
+    public cPila(int n){
+        pila = new int[n];
+        indMax = n - 1;
+        pilaVacia();
+    }
+    public void pilaVacia(){
+        tope = -1;
+    }
+    // insertar, eliminar, accesar (ORIGINAL, abajo)
+    // muestraArreglo(): recorre con for y acumula en "cadena" con " - "
+}
+```
+
+**[ORIGINAL]**
+
+```java
+public void insertar(int valor){
+    if(tope < indMax){
+        tope++;
+        pila[tope]= valor;
+    }
+}
+public int eliminar(){
+    int valor=0;
+    if(tope > -1){
+        valor= pila[tope];
+        tope--;
+    }
+    return valor;
+}
+public int accesar(){
+    int valor=0;
+    if(tope > -1){
+        valor= pila[tope];
+    }
+    return valor;
+}
+```
+
+Patrón: control de límites con `if`, sin mensaje de error; `valor` centinela en
+`0`; `tope` en −1 significa vacía.
+
+### A.2. Cola (`cCola`) — estructura lineal sobre arreglo
+
+**[RECONSTRUIDO]** atributos y constructor:
+
+```java
+public class cCola {
+    private int cola[];
+    private int first, last;
+    private int tamaño;
+    public cCola(int n){
+        cola = new int[n];
+        tamaño = n - 1;
+        colaVacia();
+    }
+    public void colaVacia(){
+        first=-1; last = -1;
+    }
+}
+```
+
+**[ORIGINAL]**
+
+```java
+public void incluir(int valor){
+    if(last < tamaño){
+        last++;
+        cola[last]= valor;
+        if(first == -1)
+            first = 0;
+    }
+}
+public int eliminar(){
+    int valor=0;
+    if(first >= 0){
+        valor = cola[first];
+        first++;
+        if(first > last)
+            colaVacia();
+    }
+    return valor;
+}
+public int acceso(){
+    int valor=0;
+    if(first >= 0){
+        valor = cola[first];
+    }
+    return valor;
+}
+```
+
+Patrón: cola lineal sin circularidad; al sacar el último elemento se invoca
+`colaVacia()` para volver `first` y `last` a −1.
+
+### A.3. Nodo (`cNodo`) — nodo de árbol
+
+**[RECONSTRUIDO]** a partir de la descripción (atributos `valor`, `izq`, `der`;
+constructor con el dato; getters y setters completos con `this.`):
+
+```java
+public class cNodo {
+    private int valor;
+    private cNodo izq, der;
+    public cNodo(int valor){
+        this.valor = valor;
+    }
+    public int getValor(){
+        return valor;
+    }
+    public void setValor(int valor){
+        this.valor = valor;
+    }
+    public cNodo getIzq(){
+        return izq;
+    }
+    public void setIzq(cNodo izq){
+        this.izq = izq;
+    }
+    public cNodo getDer(){
+        return der;
+    }
+    public void setDer(cNodo der){
+        this.der = der;
+    }
+}
+```
+
+### A.4. Árbol (`cABB`) — inserción y recorridos
+
+El árbol no declara constructor; `raiz` empieza en `null`. Los punteros auxiliares
+`nuevo` y `p` son atributos de la clase.
+
+**[ORIGINAL]**
+
+```java
+public class cABB {
+    private cNodo raiz, nuevo,p;
+    public void ingresarValor(int valor){
+        nuevo= new cNodo(valor);
+        if(raiz == null)
+            raiz = nuevo;
+        else{
+            p = raiz;
+            insertaNodo(p, nuevo);
+        }
+    }
+    public void insertaNodo(cNodo p, cNodo nuevo){
+        if (p == null)
+            p = nuevo;
+        else{
+            if(nuevo.getValor() > p.getValor()){
+                if(p.getDer() == null)
+                    p.setDer(nuevo);
+                else insertaNodo(p.getDer(), nuevo);
+            }
+            else{
+                if(p.getIzq() == null)
+                    p.setIzq(nuevo);
+                else insertaNodo(p.getIzq(), nuevo);
+            }
+        }
+    }  // fin inserta nodo
+    public String recorreArbol(int opcion){
+        p = raiz; String cadena="";
+        switch(opcion){
+            case 1:cadena=preOrden(p);break;
+            case 2:cadena=inOrden(p);break;
+            case 3:cadena=postOrden(p);break;
+        }
+        return cadena;
+    }
+    public String preOrden(cNodo p){
+        String cadena="";
+        if(p != null){
+            cadena = cadena + " - "+p.getValor();
+            cadena = cadena + preOrden(p.getIzq());
+            cadena = cadena + preOrden(p.getDer());
+        }
+        return cadena;
+    }
+    public String inOrden(cNodo p){
+        String cadena="";
+        if(p != null){
+            cadena = cadena + inOrden(p.getIzq());
+            cadena = cadena + " - "+p.getValor();
+            cadena = cadena + inOrden(p.getDer());
+        }
+        return cadena;
+    }
+    public String postOrden(cNodo p){
+        String cadena="";
+        if(p != null){
+            cadena = cadena + postOrden(p.getIzq());
+            cadena = cadena + postOrden(p.getDer());
+            cadena = cadena + " - "+p.getValor();
+        }
+        return cadena;
+    }
+}
+```
+
+Patrón: método público que crea el nodo y delega a un método recursivo público;
+los recorridos no imprimen, acumulan en un `String`; en el original los iguales
+se mandan a la izquierda (**en nuestro proyecto se rechazan**, ver sección 5).
+
+### A.5. Clase de prueba (`MaincABB` / `MainPIla`) — estilo de uso
+
+**[RECONSTRUIDO]** forma típica, con datos escritos a mano:
+
+```java
+public class MaincABB {
+    public static void main(String[] args) {
+        cABB oABB= new cABB();
+        oABB.ingresarValor(30);
+        oABB.ingresarValor(15);
+        oABB.ingresarValor(40);
+        System.out.println("In Orden: " + oABB.recorreArbol(2));
+    }
+}
+```
+
+Para la pila: `cPila oPila = new cPila(n);` luego `oPila.insertar(10);` y
+`System.out.println(oPila.muestraArreglo());`.
