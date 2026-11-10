@@ -1,44 +1,51 @@
 # Chifa Tai Lung
 
-**Sistema de gestión para un restaurante chifa**, desarrollado como proyecto académico en **Java Swing**, utilizando **Apache NetBeans** y **Maven**.
+**Sistema de gestión para un restaurante chifa**, desarrollado como proyecto final del curso *Algoritmos y Estructuras de Datos* (UTP, 2026-II) en **Java Swing**, con **Apache NetBeans**.
 
-El proyecto busca facilitar la organización de las operaciones del restaurante mediante una aplicación de escritorio con interfaces gráficas para el personal.
+Es un prototipo académico de escritorio que simula la atención y el consumo dentro del restaurante. Las estructuras de datos se implementan a mano, sin colecciones de Java. No usa base de datos ni servicios externos.
 
-> **Estado del proyecto:** en desarrollo. Actualmente se han creado los formularios gráficos de inicio de sesión y menú principal. Las demás funcionalidades descritas a continuación forman parte del alcance previsto y no deben interpretarse como implementadas.
+> **Estado del proyecto:** en desarrollo. El repositorio se reinició para empezar el proyecto con la versión de JDK acordada por el equipo. Las funcionalidades descritas abajo forman parte del alcance previsto y no deben interpretarse como implementadas.
 
-## Capturas de pantalla
+## Integrantes
 
-A continuación, se muestran las interfaces gráficas desarrolladas para el sistema de gestión **Chifa Tai Lung**, utilizando Java Swing.
+- Steve
+- Fabiano
+- Alexander
 
-### Inicio de sesión
+## Funcionalidades previstas
 
-Interfaz de autenticación diseñada para permitir el acceso de administradores y empleados al sistema.
+| Módulo | Estructura de datos | Funcionalidad |
+| --- | --- | --- |
+| Carta de platos | Arreglo de objetos | Registrar, actualizar, eliminar y consultar platos (máximo 50) |
+| Mesas | Matriz 4 × 4 | Consultar y cambiar el estado de las 16 mesas |
+| Pedidos | Lista enlazada simple | CRUD de pedidos con hasta 10 detalles y cálculo de importes |
+| Atención | Cola con prioridad | Turnos preferenciales antes que regulares, en orden de llegada |
+| Comprobantes | Pila estática | Apilar, consultar y retirar comprobantes |
+| Búsqueda de platos | Árbol binario de búsqueda (ABB) | Inserción sin duplicados y búsqueda secuencial e indexada por nombre |
+| Acceso | Roles locales | Administrador y empleado, con permisos diferenciados |
 
-![Formulario de inicio de sesión](screenshots/login.png)
+Cada módulo funciona de forma independiente y tiene su propio botón **«Cargar datos de prueba»**.
 
-### Menú principal
+## Arquitectura
 
-Panel principal del sistema, diseñado para facilitar la navegación entre los diferentes módulos de gestión del restaurante.
+Aplicación monolítica modular con **MVC** y separación por capas:
 
-![Formulario del menú principal](screenshots/principal.png)
+```text
+vista → controlador → estructuras de datos → modelo
+```
 
-## Funcionalidades
+Paquete base: `pe.edu.utp.chifa`
 
-### Interfaces desarrolladas
+```text
+pe.edu.utp.chifa
+├── app/            Main
+├── modelo/         Entidades y enumeraciones
+├── estructuras/    arreglos, matrices, listas, colas, pilas, arboles
+├── controlador/    Controladores por módulo y autenticación
+└── vista/          Formularios Swing (JFrame Form)
+```
 
-- **Inicio de sesión:** formulario `FrmLogin`.
-- **Menú principal:** formulario `FrmPrincipal`, con componentes visuales personalizados.
-- **Recursos gráficos:** iconos SVG, logotipos e imágenes integrados al proyecto.
-
-### Funcionalidades planificadas
-
-- **Gestión de platos:** administración y consulta de la carta.
-- **Gestión de mesas:** control manual del estado de las mesas.
-- **Gestión de pedidos:** registro y seguimiento de pedidos.
-- **Cola de atención:** organización de pedidos o solicitudes en espera.
-- **Comprobantes:** consulta y gestión de comprobantes.
-- **Estructuras de datos:** aplicación de algoritmos y un árbol binario de búsqueda (ABB) dentro del sistema.
-- **Roles:** acceso con usuario y contraseña para administrador y empleado, con permisos diferenciados.
+El detalle de clases, contratos de métodos, reglas de estilo y reparto de trabajo está en [`AGENTS.md`](AGENTS.md).
 
 ## Tecnologías
 
@@ -47,41 +54,8 @@ Panel principal del sistema, diseñado para facilitar la navegación entre los d
 | Java | Lenguaje de programación |
 | Java Swing | Interfaz gráfica de escritorio |
 | Apache NetBeans | Entorno de desarrollo y diseñador de formularios |
-| Maven | Gestión y construcción del proyecto |
-| JDK 26 | Versión de Java prevista para el proyecto |
-
-## Estructura del proyecto
-
-```text
-ChifaTaiLung/
-├── src/
-│   └── main/
-│       ├── java/
-│       │   └── chifatailung/
-│       │       ├── app/
-│       │       │   └── Main.java
-│       │       └── vista/
-│       │           ├── FrmLogin.java
-│       │           ├── FrmLogin.form
-│       │           ├── FrmPrincipal.java
-│       │           ├── FrmPrincipal.form
-│       │           ├── Tema.java
-│       │           └── componentes/
-│       └── resources/
-│           ├── iconos/
-│           └── imagenes/
-├── pom.xml
-├── .gitignore
-└── README.md
-```
-
-> Los archivos `.form` se conservan para poder editar los formularios desde el diseñador visual de NetBeans. La carpeta `target/` contiene archivos generados durante la compilación y no se incluye en Git.
-
-## Requisitos
-
-- **JDK 26**, de acuerdo con la configuración de Java prevista para el proyecto.
-- **Apache NetBeans** con soporte para proyectos Maven.
-- **Maven**, integrado en NetBeans o instalado por separado.
+| JDK | *Por definir por el equipo* |
+| Sistema de construcción | *Por definir (Maven o Ant)* |
 
 ## Cómo ejecutar el proyecto
 
@@ -92,18 +66,23 @@ ChifaTaiLung/
    ```
 
 2. Abre **Apache NetBeans** y selecciona **File > Open Project**.
-3. Selecciona la carpeta `ChifaTaiLung`.
-4. Verifica que el JDK configurado sea compatible con el `pom.xml`.
-5. Ejecuta el proyecto desde NetBeans. Si no hay una clase principal configurada, selecciona `chifatailung.app.Main`.
+3. Selecciona la carpeta del proyecto.
+4. Verifica que el JDK configurado en NetBeans sea el que indica este README.
+5. Ejecuta el proyecto. Si no hay una clase principal configurada, selecciona `pe.edu.utp.chifa.app.Main`.
 
-## Capturas de pantalla
+> Antes de ejecutar, comprueba tu versión de Java con `java -version`.
 
-Las capturas de las interfaces de inicio de sesión y menú principal se incorporarán conforme avance el proyecto.
+## Flujo de trabajo
+
+Cada integrante trabaja en su propia rama y se une a `main` al integrar:
+
+```bash
+git checkout -b nombre-del-integrante
+git add .
+git commit -m "feat: descripción breve"
+git push -u origin nombre-del-integrante
+```
 
 ## Contexto académico
 
-Proyecto orientado a aplicar programación orientada a objetos, diseño de interfaces con Java Swing y estructuras de datos y algoritmos a un caso práctico de gestión de restaurante.
-
-## Estado
-
-**En desarrollo.** Este repositorio irá incorporando las funcionalidades de forma progresiva.
+Proyecto orientado a aplicar programación orientada a objetos, diseño de interfaces con Java Swing y estructuras de datos y algoritmos (arreglos, matrices, listas enlazadas, colas con prioridad, pilas y árboles binarios de búsqueda) a un caso práctico de gestión de restaurante.
