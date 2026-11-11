@@ -36,12 +36,11 @@ El estilo está descrito en la sección 7 y demostrado en el Apéndice A.
   Ant). Debe existir un `pom.xml` en la raíz con empaquetado `jar` y la clase
   principal `chifatailung.ChifaTaiLung`.
 - **Dependencias:** solo el JDK (Java Swing incluido) y **FlatLaf**
-  (`com.formdev:flatlaf`), que Steve agrega al `pom.xml` para la apariencia de los
-  formularios. FlatLaf **solo se usa en `ChifaTaiLung`** (una llamada a
-  `FlatLightLaf.setup()`); ningún otro archivo del agente la importa. No agregar
-  ninguna otra librería al `pom.xml` (ni siquiera de pruebas) sin avisar al
-  equipo, ni quitar o cambiar la versión de FlatLaf; ver la sección 3 y la
-  sección 13.
+  (`com.formdev:flatlaf`), que Steve agregó al `pom.xml` para la apariencia de los
+  formularios. FlatLaf **solo lo usa Steve en la capa `vista/`** (`TemaApp` y los
+  formularios); **ningún archivo del agente la importa**. No agregar ninguna otra
+  librería al `pom.xml` (ni siquiera de pruebas) sin avisar al equipo, ni quitar o
+  cambiar la versión de FlatLaf; ver la sección 3 y la sección 13.
 - Codificación de fuentes `UTF-8` (`project.build.sourceEncoding`), por las tildes
   y la `ñ`.
 - El código debe compilar con `mvn clean package` sin errores ni dependencias
@@ -391,23 +390,21 @@ clases de prueba). El código en que se basa está en el Apéndice A.
 > hace Fabiano. Si el grupo decide otro reparto,
 > cambiar solo esta sección.
 
-### Steve — Vistas + carta + acceso (8 archivos del agente + 8 formularios manuales)
+### Steve — Vistas + carta + acceso (7 archivos del agente + 8 formularios y arranque manuales)
 
 **Formularios JFrame (8) — LOS HACE STEVE A MANO, NO EL AGENTE:** `FrmLogin`,
 `FrmPrincipal`, `FrmPlatos`, `FrmMesas`, `FrmPedidos`, `FrmAtencion`,
 `FrmComprobantes`, `FrmArbol`. El agente **no los crea, no los edita y no genera
 sus `.form`** (ver sección 9).
 
-**Lógica propia que sí hace el agente (8):** `Plato`, `Usuario`, `Rol`,
-`cArregloPlatos`, `PlatoController`, `AutenticacionService`, `AuthController`,
-`ChifaTaiLung`.
+**Lógica propia que hizo el agente (7):** `Plato`, `Usuario`, `Rol`,
+`cArregloPlatos`, `PlatoController`, `AutenticacionService`, `AuthController`
+(ya terminados; `ChifaTaiLung` lo hizo Steve a mano).
 
-- `ChifaTaiLung` abre `FrmLogin`, que no existirá hasta que Steve lo cree. Por eso
-  el agente **solo crea `ChifaTaiLung` si `FrmLogin.java` ya existe** en el
-  repositorio. Si la crea, debe llamar a `FlatLightLaf.setup()` (de
-  `com.formdev.flatlaf`) **antes** de crear cualquier componente Swing, y luego
-  abrir `FrmLogin` con `java.awt.EventQueue.invokeLater`; si no existe, lo omite y lo avisa, para no romper la compilación.
-  Ningún archivo del agente puede referenciar clases de `vista/`.
+- `ChifaTaiLung.java` (clase de arranque) y `TemaApp.java` (apariencia FlatLaf,
+  en `vista/`) **ya existen y los hizo Steve a mano**. El agente **no los crea,
+  no los edita y no los regenera**. Tampoco toca `src/main/resources` (logo e
+  imágenes). Ningún archivo del agente puede referenciar clases de `vista/`.
 
 Entrega del agente: CRUD del arreglo, login con dos cuentas y permisos por rol,
 todo compilable **sin ningún formulario**. Entrega de Steve: menú principal con
