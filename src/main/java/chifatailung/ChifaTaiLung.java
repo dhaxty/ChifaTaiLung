@@ -1,11 +1,13 @@
 
 package chifatailung;
-import com.formdev.flatlaf.FlatLightLaf;
 
+import chifatailung.vista.FrmLogin;
+import chifatailung.vista.TemaApp;
 
 public class ChifaTaiLung {
     public static void main(String[] args){
-        FlatLightLaf.setup();
-        java.awt.EventQueue.invokeLater(() -> new chifatailung.vista.FrmLogin().setVisible(true));
+        TemaApp.inicializar();
+        java.awt.EventQueue.invokeLater(() -> new FrmLogin().setVisible(true));
     }
 }
+
