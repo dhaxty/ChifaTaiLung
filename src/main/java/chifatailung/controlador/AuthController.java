@@ -1,7 +1,7 @@
-package chifataitlung.controlador;
+package chifatailung.controlador;
 
-import chifataitlung.modelo.Rol;
-import chifataitlung.modelo.Usuario;
+import chifatailung.modelo.Rol;
+import chifatailung.modelo.Usuario;
 
 // [EXTRAPOLADO]
 // Controlador del módulo de Login / Autenticación.

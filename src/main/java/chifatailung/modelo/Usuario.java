@@ -1,4 +1,4 @@
-package chifataitlung.modelo;
+package chifatailung.modelo;
 
 // [EXTRAPOLADO]
 public class Usuario {

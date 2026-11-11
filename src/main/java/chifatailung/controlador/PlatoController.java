@@ -1,8 +1,8 @@
-package chifataitlung.controlador;
+package chifatailung.controlador;
 
-import chifataitlung.estructuras.arreglos.cArregloPlatos;
-import chifataitlung.modelo.Plato;
-import chifataitlung.modelo.Rol;
+import chifatailung.estructuras.arreglos.cArregloPlatos;
+import chifatailung.modelo.Plato;
+import chifatailung.modelo.Rol;
 
 // [EXTRAPOLADO]
 // Controlador del módulo Carta de Platos.

@@ -1,6 +1,6 @@
-package chifataitlung.estructuras.arreglos;
+package chifatailung.estructuras.arreglos;
 
-import chifataitlung.modelo.Plato;
+import chifatailung.modelo.Plato;
 
 // [EXTRAPOLADO]
 // Estructura lineal sobre arreglo estático para la gestión de platos.

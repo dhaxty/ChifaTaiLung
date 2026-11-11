@@ -1,10 +1,10 @@
-package chifataitlung.pruebas;
+package chifatailung.pruebas;
 
-import chifataitlung.controlador.AuthController;
-import chifataitlung.controlador.PlatoController;
-import chifataitlung.estructuras.arreglos.cArregloPlatos;
-import chifataitlung.modelo.Plato;
-import chifataitlung.modelo.Rol;
+import chifatailung.controlador.AuthController;
+import chifatailung.controlador.PlatoController;
+import chifatailung.estructuras.arreglos.cArregloPlatos;
+import chifatailung.modelo.Plato;
+import chifatailung.modelo.Rol;
 
 // [EXTRAPOLADO]
 // Clase de prueba por consola al estilo del profesor (Apéndice A.5).

@@ -34,15 +34,19 @@ El estilo está descrito en la sección 7 y demostrado en el Apéndice A.
   características en vista previa (`--enable-preview`).
 - **Maven** es el sistema de construcción (proyecto Maven de Apache NetBeans, no
   Ant). Debe existir un `pom.xml` en la raíz con empaquetado `jar` y la clase
-  principal `chifataitlung.ChifaTaiLung`.
-- **Dependencias:** ninguna externa. Solo el JDK (Java Swing incluido). No agregar
-  librerías al `pom.xml` (ni siquiera de pruebas) sin avisar al equipo; ver la
-  sección 3 y la sección 13.
+  principal `chifatailung.ChifaTaiLung`.
+- **Dependencias:** solo el JDK (Java Swing incluido) y **FlatLaf**
+  (`com.formdev:flatlaf`), que Steve agrega al `pom.xml` para la apariencia de los
+  formularios. FlatLaf **solo se usa en `ChifaTaiLung`** (una llamada a
+  `FlatLightLaf.setup()`); ningún otro archivo del agente la importa. No agregar
+  ninguna otra librería al `pom.xml` (ni siquiera de pruebas) sin avisar al
+  equipo, ni quitar o cambiar la versión de FlatLaf; ver la sección 3 y la
+  sección 13.
 - Codificación de fuentes `UTF-8` (`project.build.sourceEncoding`), por las tildes
   y la `ñ`.
 - El código debe compilar con `mvn clean package` sin errores ni dependencias
   adicionales. Respetar la estructura estándar de Maven: `src/main/java` para el
-  código (paquete base `chifataitlung`) y `src/test/java` solo si el equipo
+  código (paquete base `chifatailung`) y `src/test/java` solo si el equipo
   decide agregar pruebas.
 - Aunque el JDK 25 ofrezca `var`, *records*, `switch` con flechas, bloques de
   texto y demás, **el estilo del profesor manda** (sección 7): no usar
@@ -65,15 +69,22 @@ se toca.
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>chifataitlung</groupId>
+    <groupId>chifatailung</groupId>
     <artifactId>ChifaTaiLung</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <exec.mainClass>chifataitlung.ChifaTaiLung</exec.mainClass>
+        <exec.mainClass>chifatailung.ChifaTaiLung</exec.mainClass>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>3.8</version>
+        </dependency>
+    </dependencies>
 </project>
 ```
 
@@ -193,7 +204,7 @@ vista → controlador → estructuras (TAD) → modelo
   *clases*, nunca las *instancias*. Sin estáticos globales compartidos.
 - Los controladores **también validan permisos**; ocultar botones no basta.
 
-Paquete base `chifataitlung`:
+Paquete base `chifatailung`:
 
 ```
 (raíz)        ChifaTaiLung.java
@@ -393,7 +404,9 @@ sus `.form`** (ver sección 9).
 
 - `ChifaTaiLung` abre `FrmLogin`, que no existirá hasta que Steve lo cree. Por eso
   el agente **solo crea `ChifaTaiLung` si `FrmLogin.java` ya existe** en el
-  repositorio; si no existe, lo omite y lo avisa, para no romper la compilación.
+  repositorio. Si la crea, debe llamar a `FlatLightLaf.setup()` (de
+  `com.formdev.flatlaf`) **antes** de crear cualquier componente Swing, y luego
+  abrir `FrmLogin` con `java.awt.EventQueue.invokeLater`; si no existe, lo omite y lo avisa, para no romper la compilación.
   Ningún archivo del agente puede referenciar clases de `vista/`.
 
 Entrega del agente: CRUD del arreglo, login con dos cuentas y permisos por rol,

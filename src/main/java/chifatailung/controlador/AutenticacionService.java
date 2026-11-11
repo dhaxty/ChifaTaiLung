@@ -1,7 +1,7 @@
-package chifataitlung.controlador;
+package chifatailung.controlador;
 
-import chifataitlung.modelo.Rol;
-import chifataitlung.modelo.Usuario;
+import chifatailung.modelo.Rol;
+import chifatailung.modelo.Usuario;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
