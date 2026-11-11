@@ -18,6 +18,9 @@ public class FrmLogin extends javax.swing.JFrame {
     public FrmLogin() {
         initComponents();
         
+        //Establecer el icono
+        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/logo140px.png")).getImage());
+        
         // Integra la barra: los paneles se extienden hasta el borde superior
         getRootPane().putClientProperty("FlatLaf.fullWindowContent", true);
 
