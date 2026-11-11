@@ -51,6 +51,48 @@ El estilo está descrito en la sección 7 y demostrado en el Apéndice A.
 
 ---
 
+### 1.1.1. Arranque desde cero y entorno del agente
+
+**Proyecto nuevo.** Si al empezar solo existe `AGENTS.md` (no hay `pom.xml` ni
+carpetas), el agente crea el `pom.xml` **una única vez** con esta plantilla, sin
+añadir nada más (ni dependencias, ni plugins, ni perfiles), y luego crea las
+carpetas de la sección 2 al escribir cada archivo. Si el `pom.xml` ya existe, no
+se toca.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>chifataitlung</groupId>
+    <artifactId>ChifaTaiLung</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.release>25</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <exec.mainClass>chifataitlung.ChifaTaiLung</exec.mainClass>
+    </properties>
+</project>
+```
+
+**Entorno del agente.** El agente puede correr en una máquina virtual (Linux, sin
+pantalla) con **solo OpenJDK 25 y sin Maven**, mientras el resto del equipo usa el
+JDK 25 de Oracle con NetBeans. Para el código es lo mismo: es Java 25 estándar.
+
+- Antes de compilar, ejecutar **una sola vez** `java -version` y `mvn -v`, cada
+  uno con límite de 20 segundos.
+- Si `mvn` no existe o no responde: **modo javac**. Se usa `javac` el resto de la
+  sesión y **no se vuelve a intentar `mvn`**. No se instala Maven (sección 1.2.1).
+- Si `java` o `javac` no existen o no son la versión 25: parar y reportar con el
+  formato de la sección 1.2.3.
+- En modo javac, el reporte final debe decir «verificado con javac, sin Maven; el
+  `pom.xml` no fue probado» y el usuario lo valida en NetBeans.
+- La VM no tiene pantalla: otra razón para no ejecutar nunca la aplicación Swing.
+
+---
+
 ## 1.2. Protocolo de terminal y anti-bucle (OBLIGATORIO)
 
 **Origen de la regla.** En una sesión anterior el agente lanzó una compilación en
@@ -68,8 +110,13 @@ marcado como **NO VERIFICADO** y se informa. Jamás se espera indefinidamente.
 - Para verificar compilación, usar **solo** uno de estos, en este orden:
   1. `mvn -B -ntp -q compile` (`-B` = modo no interactivo, `-ntp` = sin barra de
      progreso de descargas).
-  2. Si Maven no responde o no tiene red: `javac -encoding UTF-8 -d target/tmp-check`
-     sobre los `.java` de `src/main/java` (no necesita red ni plugins).
+  2. Si Maven no existe, no responde o no tiene red (ver 1.1.1):
+     `javac -encoding UTF-8 --release 25 -d target/tmp-check @fuentes.txt`, donde
+     `fuentes.txt` lista los `.java` de `src/main/java` (generar la lista con
+     `find src/main/java -name "*.java" > fuentes.txt` en Linux, o
+     `Get-ChildItem -Recurse src/main/java -Filter *.java | % FullName` en
+     PowerShell). No necesita red ni plugins. Borrar `fuentes.txt` y
+     `target/tmp-check` al terminar; no subirlos al repositorio.
 - **Prohibido** ejecutar la aplicación Swing o cualquier `main` que abra una
   ventana (`exec:java`, `java -jar`, `java ...ChifaTaiLung`, `mvn exec:*`,
   `mvn package` seguido de ejecución). Una ventana Swing **nunca termina sola** y
@@ -496,8 +543,8 @@ individuales.
 5. Explicar cada algoritmo en 3 o 4 líneas: el alumno debe poder sustentarlo
    oralmente.
 6. No inventar convenciones, no agregar dependencias, frameworks ni archivos
-   fuera del alcance. No modificar el `pom.xml` sin avisar (ya existe; ver
-   sección 1.1). Respetar JDK 25 y Maven. No cambiar firmas de la sección 5 sin
+   fuera del alcance. No modificar el `pom.xml` sin avisar (si no existe, se crea
+   una sola vez según la sección 1.1.1). Respetar JDK 25 y Maven. No cambiar firmas de la sección 5 sin
    avisar.
 7. Verificar que el código cumple las restricciones de la sección 3 y el estilo
    de la sección 7, y reportar cualquier incumplimiento.
