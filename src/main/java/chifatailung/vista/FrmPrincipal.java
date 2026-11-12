@@ -12,6 +12,7 @@ import javax.swing.JButton;
 public class FrmPrincipal extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmPrincipal.class.getName());
+    private chifatailung.modelo.Usuario oUsuario;
 
     /**
      * Creates new form FrmPrincipal
@@ -75,8 +76,23 @@ public class FrmPrincipal extends javax.swing.JFrame {
         lblIconoComprobantes.setIcon(iconoTarjeta("comprobantes.svg"));
         lblIconoBuscar.setIcon(iconoTarjeta("buscar.svg"));
         lblIconoMesas.setIcon(iconoTarjeta("mesas.svg"));
+        
+        btnCerrarSesion.addActionListener(e -> {
+            new FrmLogin().setVisible(true);
+            dispose();
+        });
     }
     
+    public FrmPrincipal(chifatailung.modelo.Usuario oUsuario) {
+    this();
+    this.oUsuario = oUsuario;
+    lblUsuarioActivo.setText(oUsuario.getUsuario());
+    if (oUsuario.getRol() == chifatailung.modelo.Rol.ADMIN)
+        lblRolBadge.setText("Administrador");
+    else
+        lblRolBadge.setText("Empleado");
+    
+    }
     // Metodo auxiliar
     private FlatSVGIcon iconoMenu(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 20, 20);
