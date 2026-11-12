@@ -18,7 +18,13 @@
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
             <version>3.8</version>
-        </dependency>    
+        </dependency>
+        
+       <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-extras</artifactId>
+            <version>3.8</version>
+        </dependency>     
             
     </dependencies>    
 </project>
