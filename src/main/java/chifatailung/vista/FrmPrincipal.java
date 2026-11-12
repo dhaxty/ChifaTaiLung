@@ -21,11 +21,11 @@ public class FrmPrincipal extends javax.swing.JFrame {
         initComponents();
         
         
-        // CÓDIGO DE ESTILOS E ICONOS
+        // estilos visuales e iconos
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/logo140px.png")).getImage());
         getRootPane().putClientProperty("FlatLaf.fullWindowContent", true);
 
-        // Estilo redondeado sin bordes para los 6 botones
+        // botones del menu lateral con esquinas redondeadas
         JButton[] botonesMenu = {
             btnCarta, btnPedidos, btnAtencion, btnComprobantes, btnBuscar, btnMesas
         };
@@ -34,7 +34,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
             btn.setMargin(new Insets(0, 14, 0, 14));
         }
 
-        // Asignar los iconos SVG 
+        // iconos SVG para los botones laterales
         btnCarta.setIcon(iconoMenu("carta.svg"));
         btnPedidos.setIcon(iconoMenu("pedidos.svg"));
         btnAtencion.setIcon(iconoMenu("clientes.svg"));
@@ -42,17 +42,17 @@ public class FrmPrincipal extends javax.swing.JFrame {
         btnBuscar.setIcon(iconoMenu("buscar.svg"));
         btnMesas.setIcon(iconoMenu("mesas.svg"));
         
-        // Esquinas redondeadas del banner superior
+        // redondeo del banner superior
         pnlBanner.putClientProperty("FlatLaf.style", "arc: 22");
 
-        // Píldora dorada redondeada para el rol
+        // estilo pastilla para el badge del rol
         lblRolBadge.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblRolBadge.putClientProperty("FlatLaf.style", "arc: 999");
         
-        // Esquinas redondeadas para Cerrar sesión (conservando sus colores actuales)
+        // boton de cerrar sesion redondeado
         btnCerrarSesion.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
         
-        // Esquinas redondeadas, contorno suave y cursor de mano para las 6 tarjetas
+        // tarjetas interactivas del menu con cursor de mano
         javax.swing.JPanel[] tarjetas = {
             cardCarta, cardPedidos, cardAtencion, cardComprobantes, cardBuscar, cardMesas
         };
@@ -60,7 +60,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
             card.putClientProperty("FlatLaf.style", "arc: 20; border: 1,1,1,1,#E6DFD3");
             card.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         }
-        // Recuadro redondeado con borde sutil para los iconos
+        // marco para los iconos de las tarjetas
         javax.swing.JLabel[] iconosTarjeta = {
             lblIconoCarta, lblIconoPedidos, lblIconoAtencion,
             lblIconoComprobantes, lblIconoBuscar, lblIconoMesas
@@ -69,7 +69,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
             lbl.putClientProperty("FlatLaf.style", "arc: 14; border: 1,1,1,1,#E6DFD3");
         }
 
-        // Asignar los iconos SVG tintados en color vino oscuro
+        // iconos SVG tintados en color vino para las tarjetas
         lblIconoCarta.setIcon(iconoTarjeta("carta.svg"));
         lblIconoPedidos.setIcon(iconoTarjeta("pedidos.svg"));
         lblIconoAtencion.setIcon(iconoTarjeta("clientes.svg"));
@@ -93,13 +93,14 @@ public class FrmPrincipal extends javax.swing.JFrame {
         lblRolBadge.setText("Empleado");
     
     }
-    // Metodo auxiliar
+    // icono blanco para los botones del menu lateral
     private FlatSVGIcon iconoMenu(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 20, 20);
         icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> Color.WHITE));
         return icono;
     }
 
+    // icono vino para las tarjetas interactivas
     private FlatSVGIcon iconoTarjeta(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 22, 22);
         icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> new Color(140, 19, 22)));

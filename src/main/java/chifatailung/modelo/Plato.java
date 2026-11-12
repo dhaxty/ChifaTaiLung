@@ -1,6 +1,6 @@
 package chifatailung.modelo;
 
-// [EXTRAPOLADO]
+// plato de la carta con su codigo unico, precio y disponibilidad
 public class Plato {
     private String codigo, nombre, categoria;
     private double precio;

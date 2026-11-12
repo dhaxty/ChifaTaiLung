@@ -1,6 +1,6 @@
 package chifatailung.modelo;
 
-// [EXTRAPOLADO]
+// usuario del sistema con clave hasheada y rol
 public class Usuario {
     private String usuario, claveHash;
     private Rol rol;

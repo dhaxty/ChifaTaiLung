@@ -6,9 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-// [EXTRAPOLADO]
-// Servicio de autenticación local para el chifa.
-// Maneja las cuentas fijas de ADMIN y EMPLEADO con hash de contraseña sin persistencia.
+// servicio local con las cuentas fijas de admin y empleado
 public class AutenticacionService {
     private Usuario usuarios[];
 
@@ -18,12 +16,7 @@ public class AutenticacionService {
         usuarios[1] = new Usuario("empleado", calcularHash("empleado123"), Rol.EMPLEADO);
     }
 
-    // [EXTRAPOLADO]
-    // Algoritmo de Hashing de Contraseña (SHA-256):
-    // 1. Convierte el texto de la clave en bytes utilizando codificación UTF-8.
-    // 2. Aplica la función resumen criptográfica SHA-256 mediante MessageDigest.
-    // 3. Formatea cada byte del resumen en una representación hexadecimal de dos caracteres.
-    // 4. Retorna la cadena hexadecimal resultante (claveHash).
+    // genera el hash SHA-256 de la contrasena para no guardarla en texto plano
     public static String calcularHash(String clave){
         if(clave == null) return "";
         try {
@@ -39,12 +32,7 @@ public class AutenticacionService {
         }
     }
 
-    // [EXTRAPOLADO]
-    // Algoritmo de Autenticación de Credenciales:
-    // 1. Valida que el nombre de usuario y la contraseña no sean nulos ni vacíos.
-    // 2. Calcula el hash SHA-256 de la contraseña proporcionada para comparación segura.
-    // 3. Itera linealmente sobre el arreglo de usuarios locales registrados.
-    // 4. Retorna la instancia de Usuario si coinciden nombre y hash; caso contrario retorna null.
+    // busca el usuario y compara el hash de la clave; devuelve null si falla
     public Usuario autenticar(String usuario, String clave){
         if(usuario == null || clave == null) return null;
         String usuarioLimpio = usuario.trim();
@@ -53,7 +41,7 @@ public class AutenticacionService {
         String hashIngresado = calcularHash(clave);
         for(int i = 0; i < usuarios.length; i++){
             if(usuarios[i] != null && usuarios[i].getUsuario().equalsIgnoreCase(usuarioLimpio)){
-                if(usuarios[i].getClaveHash().equals(hashIngresado) || usuarios[i].getClaveHash().equals(clave)){
+                if(usuarios[i].getClaveHash().equals(hashIngresado)){
                     return usuarios[i];
                 }
             }

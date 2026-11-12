@@ -4,9 +4,7 @@ import chifatailung.estructuras.arreglos.cArregloPlatos;
 import chifatailung.modelo.Plato;
 import chifatailung.modelo.Rol;
 
-// [EXTRAPOLADO]
-// Controlador del módulo Carta de Platos.
-// Gestiona la lógica de negocio, validaciones de entrada y control de acceso basado en roles.
+// controlador para la carta de platos con control de permisos por rol
 public class PlatoController {
     private Rol rolActual;
     private cArregloPlatos oArreglo;
@@ -25,6 +23,7 @@ public class PlatoController {
         return rolActual;
     }
 
+    // solo el admin puede agregar, modificar o eliminar platos de la carta
     public boolean puedeModificar(){
         return rolActual == Rol.ADMIN;
     }
@@ -41,12 +40,7 @@ public class PlatoController {
         return oArreglo;
     }
 
-    // [EXTRAPOLADO]
-    // Validación y registro de plato:
-    // 1. Verifica permisos: solo ADMIN puede registrar nuevos platos en la carta.
-    // 2. Valida obligatoriedad de campos de texto (nombre, categoría) y precio no negativo.
-    // 3. Comprueba que el arreglo no haya excedido el límite de 50 elementos.
-    // 4. Invoca la inserción en la estructura cArregloPlatos; retorna "" si es exitoso o el mensaje de error.
+    // valida permisos y campos antes de registrar; retorna vacio si fue exitoso
     public String registrar(String nombre, String categoria, double precio, boolean disponible){
         if(!puedeModificar()){
             return "Acceso denegado: solo el Administrador puede registrar platos.";
@@ -71,12 +65,7 @@ public class PlatoController {
         return "";
     }
 
-    // [EXTRAPOLADO]
-    // Validación y actualización de plato:
-    // 1. Verifica permisos de edición exclusivos para ADMIN.
-    // 2. Valida código, nombre, categoría y precio no negativo.
-    // 3. Solicita a la estructura actualizar los datos del código indicado.
-    // 4. Retorna "" en caso de éxito o mensaje descriptivo de fallo si el código no existe.
+    // valida campos y modifica el plato por su codigo
     public String actualizar(String codigo, String nombre, String categoria, double precio, boolean disponible){
         if(!puedeModificar()){
             return "Acceso denegado: solo el Administrador puede editar platos.";
@@ -101,12 +90,7 @@ public class PlatoController {
         return "";
     }
 
-    // [EXTRAPOLADO]
-    // Validación y eliminación de plato:
-    // 1. Verifica permisos de eliminación exclusivos para ADMIN.
-    // 2. Valida que el código a eliminar haya sido proporcionado.
-    // 3. Ejecuta la eliminación con corrimiento manual en la estructura cArregloPlatos.
-    // 4. Retorna "" si fue eliminado o el mensaje de error correspondiente.
+    // elimina el plato por codigo con corrimiento manual
     public String eliminar(String codigo){
         if(!puedeModificar()){
             return "Acceso denegado: solo el Administrador puede eliminar platos.";
@@ -122,10 +106,7 @@ public class PlatoController {
         return "";
     }
 
-    // [EXTRAPOLADO]
-    // Búsqueda de plato por código:
-    // Permite la consulta a cualquier rol autenticado (ADMIN o EMPLEADO).
-    // Delega la búsqueda secuencial a la estructura de datos.
+    // busqueda por codigo permitida para admin y empleado
     public Plato buscar(String codigo){
         if(codigo == null || codigo.trim().isEmpty()){
             return null;
@@ -133,17 +114,12 @@ public class PlatoController {
         return oArreglo.buscar(codigo.trim());
     }
 
-    // [EXTRAPOLADO]
-    // Obtención de todos los platos para la tabla:
-    // Retorna el arreglo de platos activos sin exponer el límite interno de 50.
+    // lista los platos registrados para cargarlos en la tabla
     public Plato[] listar(){
         return oArreglo.listar();
     }
 
-    // [EXTRAPOLADO]
-    // Carga de datos de prueba del chifa:
-    // Registra platos tradicionales para demostración rápida e independiente del módulo.
-    // Permite poblar la estructura sin requerir servicios externos ni dependencias.
+    // carga platos tradicionales para probar la carta sin depender de otros modulos
     public String cargarDatosPrueba(){
         String platosDemo[][] = {
             {"Arroz Chaufa de Pollo", "Chaufas", "18.00"},

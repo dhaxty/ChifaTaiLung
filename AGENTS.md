@@ -35,12 +35,18 @@ El estilo está descrito en la sección 7 y demostrado en el Apéndice A.
 - **Maven** es el sistema de construcción (proyecto Maven de Apache NetBeans, no
   Ant). Debe existir un `pom.xml` en la raíz con empaquetado `jar` y la clase
   principal `chifatailung.ChifaTaiLung`.
-- **Dependencias:** solo el JDK (Java Swing incluido) y **FlatLaf**
-  (`com.formdev:flatlaf`), que Steve agregó al `pom.xml` para la apariencia de los
-  formularios. FlatLaf **solo lo usa Steve en la capa `vista/`** (`TemaApp` y los
-  formularios); **ningún archivo del agente la importa**. No agregar ninguna otra
-  librería al `pom.xml` (ni siquiera de pruebas) sin avisar al equipo, ni quitar o
-  cambiar la versión de FlatLaf; ver la sección 3 y la sección 13.
+- **Dependencias:** solo el JDK (Java Swing incluido), **FlatLaf**
+  (`com.formdev:flatlaf`) 3.8 y **FlatLaf Extras** (`com.formdev:flatlaf-extras`) 3.8,
+  que Steve agregó al `pom.xml` para la apariencia de los formularios (`flatlaf-extras`
+  es una dependencia aceptada por el equipo, usada por Steve en la capa `vista/` para
+  `FlatSVGIcon`). FlatLaf y flatlaf-extras **solo los usa Steve en la capa `vista/`**
+  (`TemaApp` y los formularios); **ningún archivo del agente en `modelo/`, `estructuras/`
+  ni `controlador/` los importa**.
+  Regla estricta de dependencias: *Las dependencias del `pom.xml` solo las agrega,
+  cambia o quita el usuario (Steve) de forma manual. El agente nunca las agrega,
+  quita ni cambia de versión, ni siquiera con justificación; si cree que hace falta
+  una, la propone en el chat y espera.* No agregar ninguna otra librería al `pom.xml`
+  (ni siquiera de pruebas) sin avisar al equipo; ver la sección 3 y la sección 13.
 - Codificación de fuentes `UTF-8` (`project.build.sourceEncoding`), por las tildes
   y la `ñ`.
 - El código debe compilar con `mvn clean package` sin errores ni dependencias
@@ -49,8 +55,8 @@ El estilo está descrito en la sección 7 y demostrado en el Apéndice A.
   decide agregar pruebas.
 - Aunque el JDK 25 ofrezca `var`, *records*, `switch` con flechas, bloques de
   texto y demás, **el estilo del profesor manda** (sección 7): no usar
-  características modernas que él no usa, salvo las ya indicadas como
-  `// [EXTRAPOLADO]`.
+  características modernas que él no usa, salvo lo extrapolado del estilo del
+  profesor (que se informa en el chat, sin marcas en el código).
 
 ---
 
@@ -59,8 +65,9 @@ El estilo está descrito en la sección 7 y demostrado en el Apéndice A.
 **Proyecto nuevo.** Si al empezar solo existe `AGENTS.md` (no hay `pom.xml` ni
 carpetas), el agente crea el `pom.xml` **una única vez** con esta plantilla, sin
 añadir nada más (ni dependencias, ni plugins, ni perfiles), y luego crea las
-carpetas de la sección 2 al escribir cada archivo. Si el `pom.xml` ya existe, no
-se toca.
+carpetas de la sección 2 al escribir cada archivo. La plantilla de esta subsección
+es solo para un proyecto nuevo y no se vuelve a aplicar sobre un `pom.xml`
+existente. Si el `pom.xml` ya existe, no se toca.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -321,7 +328,7 @@ consigna original: `apilar/desapilar/verTope` → `insertar/eliminar/accesar`;
   izquierda o derecha. Interpretación **provisional** hasta preguntar al profesor.
 - **Cola con prioridad.** La cola del profesor es lineal sobre arreglo de `int`.
   La nuestra usa nodos enlazados ordenados por prioridad, con FIFO estable por
-  nivel (`ordenLlegada`). Esa parte es nuestra: marcar `// [EXTRAPOLADO]`.
+  nivel (`ordenLlegada`). Esa parte es nuestra (se informa en el chat al implementarla).
 - **Pila.** Copiar la mecánica de `cPila` (`tope = -1`, `indMax = n - 1`),
   cambiando `int[]` por `Comprobante[]`.
 
@@ -340,8 +347,13 @@ consigna original: `apilar/desapilar/verTope` → `insertar/eliminar/accesar`;
 | Matriz | Ninguna |
 | Formularios Swing | Ninguna (los ejemplos del profesor son de consola) |
 
-Donde no hay referencia: extrapolar el estilo de la sección 7 y marcar con
-`// [EXTRAPOLADO]` para poder consultarlo con el profesor.
+Donde no hay referencia: el agente YA NO deja marcas `[EXTRAPOLADO]`, `[PROPUESTA]`
+ni etiquetas parecidas dentro del código ni de los comentarios. Cuando una parte del
+código no tenga referencia en el Apéndice A y haya sido extrapolada del estilo del
+profesor, el agente lo informa en el mensaje final del chat (archivo, método y una
+línea de por qué), para que Steve lo consulte con el profesor. El código debe verse
+como escrito a mano por un estudiante. Mantener los cierres tipo `// fin inserta nodo`,
+que sí usa el profesor.
 
 ---
 
@@ -373,29 +385,34 @@ clases de prueba). El código en que se basa está en el Apéndice A.
   setters completos con `this.`.
 - **Formato:** llaves en la misma línea, 4 espacios, `if` de una sola sentencia
   sin llaves, varias sentencias cortas en una línea, casi sin comentarios (solo
-  cierres como `// fin inserta nodo`).
+  cierres como `// fin inserta nodo`). Excepción para los archivos de Steve: se
+  permiten comentarios breves en español que expliquen la lógica de cada bloque,
+  escritos de forma natural, como los pondría un programador al explicarle el
+  código a un compañero (ver Tarea 3).
 - **Métodos recursivos del ABB:** públicos, como en el original.
 - **Corte de ejecución:** si la estructura está llena o vacía, el método termina
   en silencio sin mensaje.
 - **El profesor no usa** genéricos, interfaces propias, `final`, constantes ni
   enums. En nuestro proyecto sí se requieren enums y una constante de capacidad:
-  usar convención Java normal y marcar `// [EXTRAPOLADO]`.
+  usar convención Java normal sin marcas en el código (se informa en el chat).
 
 ---
 
 ## 8. Reparto de trabajo
 
-> Steve hace **todos los formularios JFrame, manualmente en NetBeans** (el agente
-> no los toca), por eso tiene la parte lógica más liviana y la matriz de mesas la
-> hace Fabiano. Si el grupo decide otro reparto,
+> Steve hace el diseño de **todos los formularios JFrame, manualmente en NetBeans**
+> (el agente no toca el diseño y solo implementa lógica si Steve lo pide), por eso
+> tiene la parte lógica más liviana y la matriz de mesas la hace Fabiano. Si el
+> grupo decide otro reparto,
 > cambiar solo esta sección.
 
 ### Steve — Vistas + carta + acceso (7 archivos del agente + 8 formularios y arranque manuales)
 
-**Formularios JFrame (8) — LOS HACE STEVE A MANO, NO EL AGENTE:** `FrmLogin`,
+**Formularios JFrame (8) — EL DISEÑO LO HACE STEVE A MANO EN NETBEANS:** `FrmLogin`,
 `FrmPrincipal`, `FrmPlatos`, `FrmMesas`, `FrmPedidos`, `FrmAtencion`,
-`FrmComprobantes`, `FrmArbol`. El agente **no los crea, no los edita y no genera
-sus `.form`** (ver sección 9).
+`FrmComprobantes`, `FrmArbol`. El agente **no toca el diseño ni genera o edita
+sus `.form`**, y solo implementa lógica en ellos cuando Steve lo pida de forma
+explícita (ver sección 9).
 
 **Lógica propia que hizo el agente (7):** `Plato`, `Usuario`, `Rol`,
 `cArregloPlatos`, `PlatoController`, `AutenticacionService`, `AuthController`
@@ -436,34 +453,25 @@ búsqueda secuencial e indexada, y recorrido en orden.
   de la sección 4 y avisar para reemplazarla.
 - Cada controlador recibe el `Rol` vigente en su constructor
   (`new PlatoController(rol)`). `FrmPrincipal` lo pasa a cada formulario y este
-  al controlador. **[PROPUESTA]**
+  al controlador.
 - Los controladores validan y devuelven un `String` con el mensaje de error
   (`""` si todo salió bien), para que el formulario lo muestre sin excepciones.
-  **[PROPUESTA]**
 - Cada controlador ofrece `cargarDatosPrueba()` para el botón del formulario.
-  **[PROPUESTA]**
 - Steve necesita **esqueletos de los controladores** de Fabiano y Alexander
   (firmas públicas, aunque sin lógica) en los primeros días para avanzar con las
   vistas. Fabiano y Alexander los entregan antes que la lógica real.
 
 ---
 
-## 9. Formularios Swing (los hace Steve a mano — el agente NO los crea)
+## 9. Formularios Swing (diseño de Steve a mano — lógica del agente solo a pedido)
 
 ### 9.1. Prohibiciones para el agente
 
-- **No crear, editar, regenerar ni borrar** ningún archivo de `vista/` (`Frm*.java`)
-  ni sus `.form` de NetBeans, ni siquiera como «esqueleto», «provisional» o
-  «para que compile».
-- **No usar los diseños `.png`** (`FrmLoginDesign.png`, `FrmPrincipal.png`,
-  `FrmMesas.png`) para generar interfaces. Si aparecen en la carpeta, ignorarlos.
-- **No escribir manejadores de eventos** ni código Swing (`JFrame`, `JTable`,
-  `DefaultTableModel`, `JOptionPane`…) en ningún archivo, salvo que el usuario lo
-  pida de forma explícita en ese mensaje.
-- Los archivos del agente **no pueden importar ni nombrar clases de `vista/`**,
-  para que el proyecto compile aunque no exista ningún formulario.
-- Si una tarea parece requerir un formulario, el agente se detiene en el
-  controlador y dice: «esta parte la conecta Steve en el formulario».
+- El **DISEÑO de todos los formularios (`Frm*.java` y `.form`) es exclusivo de Steve y se hace de forma manual en NetBeans.** El agente no puede modificar el diseño en absoluto. Se define "diseño" como: el archivo `.form`; el bloque `// <editor-fold ... Generated Code>` y `initComponents()`; la declaración de variables generadas al final de la clase; y cualquier propiedad visual (componentes nuevos o eliminados, nombres de componentes, layouts, posiciones, tamaños, textos de etiquetas y botones, colores, fuentes, iconos, bordes).
+- El agente **sí puede implementar o modificar la LÓGICA** dentro de un formulario (cuerpo de los manejadores de eventos de botones y demás componentes existentes, campos e `import` fuera de los bloques generados, métodos auxiliares privados, y llamadas a controladores), pero **solo cuando Steve lo pida de forma explícita en ese mensaje y solo en el formulario que nombre**.
+- Si una tarea exigiría cambiar el diseño (agregar un botón, mover un componente, renombrar una variable generada, editar el `.form`), el agente se detiene y dice: *"esto es diseño, lo hace Steve a mano en NetBeans"*, describiendo qué componente haría falta.
+- **No crear ni borrar formularios**, ni usar los diseños `.png` (`FrmLoginDesign.png`, `FrmPrincipal.png`, `FrmMesas.png`) para generar interfaces. Si aparecen en la carpeta, ignorarlos.
+- Los archivos del agente en `modelo/`, `estructuras/` y `controlador/` **no pueden importar ni nombrar clases de `vista/`**, para que el proyecto compile aunque no exista ningún formulario.
 
 ### 9.2. Qué sí entrega el agente para facilitar el trabajo manual de Steve
 
@@ -485,7 +493,7 @@ un archivo del repositorio) una mini-guía de conexión de 5 a 10 líneas:
 - Cada formulario crea su **propio** controlador y estructura; no comparte
   instancias con otro y debe abrir directo desde `FrmPrincipal` sin datos previos.
 - Nombrar componentes con significado (`txtNombre`, `btnRegistrar`,
-  `tblPlatos`). **[PROPUESTA]**
+  `tblPlatos`).
 - Mostrar errores de validación con mensaje y ocultar o deshabilitar botones según
   el rol, **además** de la validación del controlador.
 
@@ -545,11 +553,14 @@ individuales.
 1. Identificar para quién trabaja (Steve, Fabiano o Alexander) y **tocar solo
    sus archivos**. Si necesita cambiar algo de otra persona, avisar en lugar de
    editarlo.
-2. **Nunca crear ni editar formularios** (`vista/`, `.form`): los hace Steve a
-   mano (sección 9).
+2. **No tocar el diseño de los formularios** (`vista/`, `.form`): el diseño lo hace
+   Steve a mano en NetBeans; el agente solo puede implementar lógica en ellos si
+   Steve lo pide explícitamente en su mensaje (sección 9).
 3. Trabajar **un módulo a la vez**.
 4. Antes de cada algoritmo, indicar en qué ejemplo del Apéndice A se basa. Si no
-   hay ejemplo, marcar `// [EXTRAPOLADO]`.
+   hay ejemplo, extrapolar el estilo del profesor sin dejar marcas `[EXTRAPOLADO]`
+   en el código ni en los comentarios, informándolo en el mensaje final del chat
+   para consulta de Steve.
 5. Explicar cada algoritmo en 3 o 4 líneas: el alumno debe poder sustentarlo
    oralmente.
 6. No inventar convenciones, no agregar dependencias, frameworks ni archivos

@@ -11,7 +11,7 @@ package chifatailung.vista;
 public class FrmLogin extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmLogin.class.getName());
-    private chifatailung.controlador.AutenticacionService oAuth = new chifatailung.controlador.AutenticacionService();
+    private chifatailung.controlador.AuthController oAuthController = new chifatailung.controlador.AuthController();
 
     /**
      * Creates new form FrmLogin
@@ -19,13 +19,13 @@ public class FrmLogin extends javax.swing.JFrame {
     public FrmLogin() {
         initComponents();
         
-        //Establecer el icono
+        // icono de la ventana
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/logo140px.png")).getImage());
         
-        // Integra la barra: los paneles se extienden hasta el borde superior
+        // integra los paneles hasta el borde superior
         getRootPane().putClientProperty("FlatLaf.fullWindowContent", true);
 
-        // Padding y estilos de los campos
+        // estilos y placeholders de las cajas de texto
         txtUsuario.putClientProperty("JTextField.placeholderText", "Ingrese su usuario");
         txtUsuario.putClientProperty("JComponent.roundRect", true);
         txtUsuario.putClientProperty("JTextField.padding", new java.awt.Insets(0, 12, 0, 12));
@@ -39,26 +39,22 @@ public class FrmLogin extends javax.swing.JFrame {
         getRootPane().setDefaultButton(btnIngresar);
     }
     
+    // valida las credenciales a traves del controlador y entra al menu
     private void ingresar() {
         String usuario = txtUsuario.getText().trim();
         String clave = new String(txtPassword.getPassword());
 
-        if (usuario.isEmpty() || clave.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Ingrese usuario y contraseña.",
-                    "Datos incompletos", javax.swing.JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        chifatailung.modelo.Usuario oUsuario = oAuth.autenticar(usuario, clave);
-
-        if (oUsuario == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.",
+        // el controlador valida campos obligatorios y credenciales
+        String mensajeError = oAuthController.iniciarSesion(usuario, clave);
+        if (!mensajeError.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, mensajeError,
                     "Error de acceso", javax.swing.JOptionPane.ERROR_MESSAGE);
             txtPassword.setText("");
             return;
         }
 
-        new FrmPrincipal(oUsuario).setVisible(true);
+        // pasa el usuario autenticado a la ventana principal
+        new FrmPrincipal(oAuthController.getUsuarioAutenticado()).setVisible(true);
         dispose();
     }
     /**

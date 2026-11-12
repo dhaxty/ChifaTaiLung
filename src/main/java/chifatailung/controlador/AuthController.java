@@ -3,9 +3,7 @@ package chifatailung.controlador;
 import chifatailung.modelo.Rol;
 import chifatailung.modelo.Usuario;
 
-// [EXTRAPOLADO]
-// Controlador del módulo de Login / Autenticación.
-// Conecta el formulario FrmLogin con el servicio de autenticación y gestiona la sesión activa.
+// controlador de inicio de sesion para conectar FrmLogin con el servicio
 public class AuthController {
     private AutenticacionService servicio;
     private Usuario usuarioAutenticado;
@@ -20,12 +18,7 @@ public class AuthController {
         this.usuarioAutenticado = null;
     }
 
-    // [EXTRAPOLADO]
-    // Algoritmo de Inicio de Sesión:
-    // 1. Valida que los campos de usuario y contraseña no estén vacíos.
-    // 2. Solicita al servicio de autenticación la validación contra las cuentas locales.
-    // 3. Al autenticar con éxito, almacena la referencia del usuario autenticado en la sesión.
-    // 4. Retorna "" si el acceso es concedido, o el mensaje de error para mostrar en la vista.
+    // valida campos y autentica credenciales; devuelve "" si es correcto o el mensaje de error
     public String iniciarSesion(String usuario, String clave){
         if(usuario == null || usuario.trim().isEmpty()){
             return "El nombre de usuario es obligatorio.";
@@ -63,9 +56,7 @@ public class AuthController {
         return servicio;
     }
 
-    // [EXTRAPOLADO]
-    // Carga de datos de prueba para login:
-    // Retorna "" confirmando que las cuentas 'admin' y 'empleado' están preparadas.
+    // las cuentas de prueba vienen listas en el servicio de autenticacion
     public String cargarDatosPrueba(){
         return "";
     }
