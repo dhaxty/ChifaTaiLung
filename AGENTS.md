@@ -406,6 +406,13 @@ clases de prueba). El código en que se basa está en el Apéndice A.
 > grupo decide otro reparto,
 > cambiar solo esta sección.
 
+> **Autorización temporal de implementación (solo lógica):** Steve tiene autorización
+> para dirigir al agente en la implementación de las clases de `modelo/`, `estructuras/`,
+> `controlador/` y `pruebas/` asignadas originalmente a **Fabiano** y **Alexander**,
+> trabajando **un módulo a la vez** (sección 13.3) y sin crear ni modificar formularios
+> de `vista/`. La atribución académica del equipo (`Steve, Fabiano y Alexander`) se
+> mantiene sin cambios.
+
 ### Steve — Vistas + carta + acceso (7 archivos del agente + 8 formularios y arranque manuales)
 
 **Formularios JFrame (8) — EL DISEÑO LO HACE STEVE A MANO EN NETBEANS:** `FrmLogin`,
