@@ -39,22 +39,30 @@ public class cPilaComprobantes {
     }
 
     public boolean estaVacia(){
-        return tope == -1;
+        boolean vacia = false;
+        if(tope == -1){
+            vacia = true;
+        }
+        return vacia;
     }
 
     public boolean estaLlena(){
-        return tope >= indMax;
+        boolean llena = false;
+        if(tope >= indMax){
+            llena = true;
+        }
+        return llena;
     }
 
     // apila si no excede indMax; devuelve true si pudo apilar y false si esta llena
     public boolean insertar(Comprobante valor){
-        if(valor == null) return false;
-        if(tope < indMax){
+        boolean insertado = false;
+        if(valor != null && tope < indMax){
             tope++;
             pila[tope] = valor;
-            return true;
+            insertado = true;
         }
-        return false;
+        return insertado;
     } // fin insertar
 
     // desapila el comprobante del tope y lo devuelve; retorna null si la pila esta vacia
@@ -79,21 +87,29 @@ public class cPilaComprobantes {
 
     // busca secuencialmente un comprobante por su codigo o numero identificador
     public Comprobante buscar(String numero){
-        if(numero == null || tope == -1) return null;
-        for(int i = 0; i <= tope; i++){
-            if(pila[i] != null && pila[i].getNumero() != null && pila[i].getNumero().equalsIgnoreCase(numero.trim())){
-                return pila[i];
+        Comprobante encontrado = null;
+        if(numero != null && tope > -1){
+            int i = 0;
+            while(i <= tope && encontrado == null){
+                if(pila[i] != null && pila[i].getNumero() != null && pila[i].getNumero().equalsIgnoreCase(numero.trim())){
+                    encontrado = pila[i];
+                }
+                i++;
             }
         }
-        return null;
+        return encontrado;
     } // fin buscar
 
     // devuelve un arreglo exacto con los comprobantes activos para alimentar JTable
     public Comprobante[] listar(){
-        if(tope == -1) return new Comprobante[0];
-        Comprobante resultado[] = new Comprobante[tope + 1];
-        for(int i = 0; i <= tope; i++){
-            resultado[i] = pila[i];
+        Comprobante resultado[];
+        if(tope == -1){
+            resultado = new Comprobante[0];
+        } else {
+            resultado = new Comprobante[tope + 1];
+            for(int i = 0; i <= tope; i++){
+                resultado[i] = pila[i];
+            }
         }
         return resultado;
     } // fin listar

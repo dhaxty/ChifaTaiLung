@@ -25,7 +25,11 @@ public class PlatoController {
 
     // solo el admin puede agregar, modificar o eliminar platos de la carta
     public boolean puedeModificar(){
-        return rolActual == Rol.ADMIN;
+        boolean puede = false;
+        if(rolActual == Rol.ADMIN){
+            puede = true;
+        }
+        return puede;
     }
 
     public int getCantidad(){
@@ -42,76 +46,71 @@ public class PlatoController {
 
     // valida permisos y campos antes de registrar; retorna vacio si fue exitoso
     public String registrar(String nombre, String categoria, double precio, boolean disponible){
+        String mensaje = "";
         if(!puedeModificar()){
-            return "Acceso denegado: solo el Administrador puede registrar platos.";
+            mensaje = "Acceso denegado: solo el Administrador puede registrar platos.";
+        } else if(nombre == null || nombre.trim().isEmpty()){
+            mensaje = "El nombre del plato es obligatorio.";
+        } else if(categoria == null || categoria.trim().isEmpty()){
+            mensaje = "La categoría es obligatoria.";
+        } else if(precio < 0){
+            mensaje = "El precio no puede ser negativo.";
+        } else if(oArreglo.estaLleno()){
+            mensaje = "Capacidad máxima alcanzada (límite: 50 platos).";
+        } else {
+            String codigo = oArreglo.registrar(nombre.trim(), categoria.trim(), precio, disponible);
+            if(codigo == null){
+                mensaje = "No se pudo registrar el plato: estructura llena.";
+            }
         }
-        if(nombre == null || nombre.trim().isEmpty()){
-            return "El nombre del plato es obligatorio.";
-        }
-        if(categoria == null || categoria.trim().isEmpty()){
-            return "La categoría es obligatoria.";
-        }
-        if(precio < 0){
-            return "El precio no puede ser negativo.";
-        }
-        if(oArreglo.estaLleno()){
-            return "Capacidad máxima alcanzada (límite: 50 platos).";
-        }
-
-        String codigo = oArreglo.registrar(nombre.trim(), categoria.trim(), precio, disponible);
-        if(codigo == null){
-            return "No se pudo registrar el plato: estructura llena.";
-        }
-        return "";
+        return mensaje;
     }
 
     // valida campos y modifica el plato por su codigo
     public String actualizar(String codigo, String nombre, String categoria, double precio, boolean disponible){
+        String mensaje = "";
         if(!puedeModificar()){
-            return "Acceso denegado: solo el Administrador puede editar platos.";
+            mensaje = "Acceso denegado: solo el Administrador puede editar platos.";
+        } else if(codigo == null || codigo.trim().isEmpty()){
+            mensaje = "El código del plato es obligatorio.";
+        } else if(nombre == null || nombre.trim().isEmpty()){
+            mensaje = "El nombre del plato es obligatorio.";
+        } else if(categoria == null || categoria.trim().isEmpty()){
+            mensaje = "La categoría es obligatoria.";
+        } else if(precio < 0){
+            mensaje = "El precio no puede ser negativo.";
+        } else {
+            boolean actualizado = oArreglo.actualizar(codigo.trim(), nombre.trim(), categoria.trim(), precio, disponible);
+            if(!actualizado){
+                mensaje = "No se encontró ningún plato con el código: " + codigo;
+            }
         }
-        if(codigo == null || codigo.trim().isEmpty()){
-            return "El código del plato es obligatorio.";
-        }
-        if(nombre == null || nombre.trim().isEmpty()){
-            return "El nombre del plato es obligatorio.";
-        }
-        if(categoria == null || categoria.trim().isEmpty()){
-            return "La categoría es obligatoria.";
-        }
-        if(precio < 0){
-            return "El precio no puede ser negativo.";
-        }
-
-        boolean actualizado = oArreglo.actualizar(codigo.trim(), nombre.trim(), categoria.trim(), precio, disponible);
-        if(!actualizado){
-            return "No se encontró ningún plato con el código: " + codigo;
-        }
-        return "";
+        return mensaje;
     }
 
     // elimina el plato por codigo con corrimiento manual
     public String eliminar(String codigo){
+        String mensaje = "";
         if(!puedeModificar()){
-            return "Acceso denegado: solo el Administrador puede eliminar platos.";
+            mensaje = "Acceso denegado: solo el Administrador puede eliminar platos.";
+        } else if(codigo == null || codigo.trim().isEmpty()){
+            mensaje = "El código del plato es obligatorio.";
+        } else {
+            boolean eliminado = oArreglo.eliminar(codigo.trim());
+            if(!eliminado){
+                mensaje = "No se encontró ningún plato con el código: " + codigo;
+            }
         }
-        if(codigo == null || codigo.trim().isEmpty()){
-            return "El código del plato es obligatorio.";
-        }
-
-        boolean eliminado = oArreglo.eliminar(codigo.trim());
-        if(!eliminado){
-            return "No se encontró ningún plato con el código: " + codigo;
-        }
-        return "";
+        return mensaje;
     }
 
     // busqueda por codigo permitida para admin y empleado
     public Plato buscar(String codigo){
-        if(codigo == null || codigo.trim().isEmpty()){
-            return null;
+        Plato encontrado = null;
+        if(codigo != null && !codigo.trim().isEmpty()){
+            encontrado = oArreglo.buscar(codigo.trim());
         }
-        return oArreglo.buscar(codigo.trim());
+        return encontrado;
     }
 
     // lista los platos registrados para cargarlos en la tabla
@@ -136,10 +135,11 @@ public class PlatoController {
             {"Chicha Morada 1L", "Bebidas", "10.00"}
         };
 
-        for(int i = 0; i < platosDemo.length; i++){
-            if(oArreglo.estaLleno()) break;
+        int i = 0;
+        while(i < platosDemo.length && !oArreglo.estaLleno()){
             double precio = Double.parseDouble(platosDemo[i][2]);
             oArreglo.registrar(platosDemo[i][0], platosDemo[i][1], precio, true);
+            i++;
         }
         return "";
     }

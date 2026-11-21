@@ -5,7 +5,7 @@ import chifatailung.modelo.Plato;
 // arreglo lineal para la carta de platos implementado a mano sin colecciones
 public class cArregloPlatos {
     private Plato platos[];
-    private int tope;
+    private int cantidad;
     private int indMax;
     private int contadorCodigo;
 
@@ -17,23 +17,20 @@ public class cArregloPlatos {
         platos = new Plato[n];
         indMax = n - 1;
         contadorCodigo = 0;
+        cantidad = 0;
         arregloVacio();
     }
 
     // deja el tope en -1 y limpia las posiciones del arreglo
     public void arregloVacio(){
-        tope = -1;
+        cantidad = 0;
         for(int i = 0; i <= indMax; i++){
             platos[i] = null;
         }
     }
 
-    public int getTope(){
-        return tope;
-    }
-
     public int getCantidad(){
-        return tope + 1;
+        return cantidad;
     }
 
     public int getCapacidad(){
@@ -41,100 +38,122 @@ public class cArregloPlatos {
     }
 
     public boolean estaLleno(){
-        return tope >= indMax;
+        boolean lleno = false;
+        if(cantidad >= platos.length){
+            lleno = true;
+        }
+        return lleno;
     }
 
     public boolean estaVacio(){
-        return tope == -1;
+        boolean vacio = false;
+        if(cantidad == 0){
+            vacio = true;
+        }
+        return vacio;
     }
 
     // genera codigo automatico P001, P002... y guarda al final si hay espacio
     public String registrar(String nombre, String categoria, double precio, boolean disponible){
-        if(tope < indMax){
+        String codigo = null;
+        if(cantidad < platos.length){
             // el contador no baja al borrar para no reutilizar codigos en la sesion
             contadorCodigo++;
-            String codigo = String.format("P%03d", contadorCodigo);
-            tope++;
-            platos[tope] = new Plato(codigo, nombre, categoria, precio, disponible);
-            return codigo;
+            codigo = String.format("P%03d", contadorCodigo);
+            platos[cantidad] = new Plato(codigo, nombre, categoria, precio, disponible);
+            cantidad++;
         }
-        return null;
+        return codigo;
     }
 
     // sobrecarga para registrar cuando ya se tiene el objeto plato
     public String registrar(Plato nuevoPlato){
-        if(nuevoPlato == null) return null;
-        if(tope < indMax){
+        String codigo = null;
+        if(nuevoPlato != null && cantidad < platos.length){
             if(nuevoPlato.getCodigo() == null || nuevoPlato.getCodigo().trim().isEmpty()){
                 contadorCodigo++;
                 nuevoPlato.setCodigo(String.format("P%03d", contadorCodigo));
             }
-            tope++;
-            platos[tope] = nuevoPlato;
-            return nuevoPlato.getCodigo();
+            platos[cantidad] = nuevoPlato;
+            codigo = nuevoPlato.getCodigo();
+            cantidad++;
         }
-        return null;
+        return codigo;
     }
 
     // busca por codigo y actualiza sus datos; devuelve false si no existe
     public boolean actualizar(String codigo, String nombre, String categoria, double precio, boolean disponible){
-        if(codigo == null) return false;
-        for(int i = 0; i <= tope; i++){
-            if(platos[i] != null && platos[i].getCodigo().equalsIgnoreCase(codigo)){
-                platos[i].setNombre(nombre);
-                platos[i].setCategoria(categoria);
-                platos[i].setPrecio(precio);
-                platos[i].setDisponible(disponible);
-                return true;
+        boolean actualizado = false;
+        if(codigo != null){
+            int i = 0;
+            while(i < cantidad && !actualizado){
+                if(platos[i] != null && platos[i].getCodigo().equalsIgnoreCase(codigo)){
+                    platos[i].setNombre(nombre);
+                    platos[i].setCategoria(categoria);
+                    platos[i].setPrecio(precio);
+                    platos[i].setDisponible(disponible);
+                    actualizado = true;
+                }
+                i++;
             }
         }
-        return false;
+        return actualizado;
     }
 
     // actualiza los datos tomando los valores desde otro objeto plato
     public boolean actualizar(String codigo, Plato datos){
-        if(codigo == null || datos == null) return false;
-        return actualizar(codigo, datos.getNombre(), datos.getCategoria(), datos.getPrecio(), datos.isDisponible());
+        boolean actualizado = false;
+        if(codigo != null && datos != null){
+            actualizado = actualizar(codigo, datos.getNombre(), datos.getCategoria(), datos.getPrecio(), datos.isDisponible());
+        }
+        return actualizado;
     }
 
     // busca el codigo y corre los platos a la izquierda para tapar el vacio
     public boolean eliminar(String codigo){
-        if(codigo == null || tope == -1) return false;
-        int pos = -1;
-        for(int i = 0; i <= tope; i++){
-            if(platos[i] != null && platos[i].getCodigo().equalsIgnoreCase(codigo)){
-                pos = i;
-                break;
+        boolean eliminado = false;
+        if(codigo != null && cantidad > 0){
+            int pos = -1;
+            int i = 0;
+            while(i < cantidad && pos == -1){
+                if(platos[i] != null && platos[i].getCodigo().equalsIgnoreCase(codigo)){
+                    pos = i;
+                }
+                i++;
+            }
+            if(pos != -1){
+                // corre los platos una posicion a la izquierda
+                for(int j = pos; j < cantidad - 1; j++){
+                    platos[j] = platos[j + 1];
+                }
+                // limpia la ultima referencia y decrementa el tope
+                platos[cantidad - 1] = null;
+                cantidad--;
+                eliminado = true;
             }
         }
-        if(pos == -1) return false;
-
-        // corre los platos una posicion a la izquierda
-        for(int i = pos; i < tope; i++){
-            platos[i] = platos[i + 1];
-        }
-        // limpia la ultima referencia y decrementa el tope
-        platos[tope] = null;
-        tope--;
-        return true;
+        return eliminado;
     }
 
     // busqueda secuencial por codigo del plato; devuelve null si no existe
     public Plato buscar(String codigo){
-        if(codigo == null || tope == -1) return null;
-        for(int i = 0; i <= tope; i++){
-            if(platos[i] != null && platos[i].getCodigo().equalsIgnoreCase(codigo)){
-                return platos[i];
+        Plato encontrado = null;
+        if(codigo != null && cantidad > 0){
+            int i = 0;
+            while(i < cantidad && encontrado == null){
+                if(platos[i] != null && platos[i].getCodigo().equalsIgnoreCase(codigo)){
+                    encontrado = platos[i];
+                }
+                i++;
             }
         }
-        return null;
+        return encontrado;
     }
 
     // copia los platos activos a un nuevo arreglo para cargarlos en la tabla
     public Plato[] listar(){
-        if(tope == -1) return new Plato[0];
-        Plato resultado[] = new Plato[tope + 1];
-        for(int i = 0; i <= tope; i++){
+        Plato resultado[] = new Plato[cantidad];
+        for(int i = 0; i < cantidad; i++){
             resultado[i] = platos[i];
         }
         return resultado;
@@ -143,7 +162,7 @@ public class cArregloPlatos {
     // arma una cadena con los platos separados por guiones para probar por consola
     public String muestraArreglo(){
         String cadena = "";
-        for(int i = 0; i <= tope; i++){
+        for(int i = 0; i < cantidad; i++){
             if(platos[i] != null){
                 cadena = cadena + " - " + platos[i].getCodigo() + ": " + platos[i].getNombre();
             }

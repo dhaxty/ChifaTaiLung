@@ -58,43 +58,52 @@ public class cMatrizMesas {
 
     // devuelve la mesa en la posicion [fila][columna] o null si excede los limites
     public Mesa obtener(int fila, int columna){
+        Mesa mesa = null;
         if(fila >= 0 && fila < filas && columna >= 0 && columna < columnas){
-            return mesas[fila][columna];
+            mesa = mesas[fila][columna];
         }
-        return null;
+        return mesa;
     }
 
     // busca una mesa por su numero del 1 al 16; devuelve null si no existe
     public Mesa buscar(int numero){
-        for(int i = 0; i < filas; i++){
-            for(int j = 0; j < columnas; j++){
+        Mesa encontrado = null;
+        int i = 0;
+        while(i < filas && encontrado == null){
+            int j = 0;
+            while(j < columnas && encontrado == null){
                 if(mesas[i][j] != null && mesas[i][j].getNumero() == numero){
-                    return mesas[i][j];
+                    encontrado = mesas[i][j];
                 }
+                j++;
             }
+            i++;
         }
-        return null;
+        return encontrado;
     }
 
     // cambia el estado de una mesa por su numero; retorna true si la encontro y actualizo
     public boolean cambiarEstado(int numero, EstadoMesa estado){
-        if(estado == null) return false;
-        Mesa mesaBuscada = buscar(numero);
-        if(mesaBuscada != null){
-            mesaBuscada.setEstado(estado);
-            return true;
+        boolean cambiado = false;
+        if(estado != null){
+            Mesa mesaBuscada = buscar(numero);
+            if(mesaBuscada != null){
+                mesaBuscada.setEstado(estado);
+                cambiado = true;
+            }
         }
-        return false;
+        return cambiado;
     }
 
     // cuenta cuantas mesas se encuentran en el estado consultado
     public int contar(EstadoMesa estado){
         int contador = 0;
-        if(estado == null) return contador;
-        for(int i = 0; i < filas; i++){
-            for(int j = 0; j < columnas; j++){
-                if(mesas[i][j] != null && mesas[i][j].getEstado() == estado){
-                    contador++;
+        if(estado != null){
+            for(int i = 0; i < filas; i++){
+                for(int j = 0; j < columnas; j++){
+                    if(mesas[i][j] != null && mesas[i][j].getEstado() == estado){
+                        contador++;
+                    }
                 }
             }
         }

@@ -19,28 +19,30 @@ public class cABBPlatos {
     }
 
     public boolean estaVacio(){
-        return raiz == null;
+        boolean vacio = false;
+        if(raiz == null){
+            vacio = true;
+        }
+        return vacio;
     }
 
     // inserta un plato verificando que no exista duplicado por nombre ignorando mayusculas y minusculas
     public boolean ingresarValor(Plato valor){
-        if(valor == null || valor.getNombre() == null || valor.getNombre().trim().isEmpty()){
-            return false;
+        boolean ingresado = false;
+        if(valor != null && valor.getNombre() != null && !valor.getNombre().trim().isEmpty()){
+            // rechazo silencioso de duplicados segun seccion 5
+            if(buscarIndexada(valor.getNombre()) == null){
+                nuevo = new cNodoABB(valor);
+                if(raiz == null){
+                    raiz = nuevo;
+                } else {
+                    p = raiz;
+                    insertaNodo(p, nuevo);
+                }
+                ingresado = true;
+            }
         }
-
-        // rechazo silencioso de duplicados segun seccion 5
-        if(buscarIndexada(valor.getNombre()) != null){
-            return false;
-        }
-
-        nuevo = new cNodoABB(valor);
-        if(raiz == null){
-            raiz = nuevo;
-        } else {
-            p = raiz;
-            insertaNodo(p, nuevo);
-        }
-        return true;
+        return ingresado;
     }
 
     // insercion recursiva segun estilo del profesor con compareToIgnoreCase
@@ -63,59 +65,65 @@ public class cABBPlatos {
 
     // busqueda secuencial recursiva que recorre todos los nodos sin aprovechar el orden del arbol
     public Plato buscarSecuencial(String nombre){
-        if(nombre == null || raiz == null){
-            return null;
+        Plato encontrado = null;
+        if(nombre != null && raiz != null){
+            encontrado = buscarSecuencialRecursivo(raiz, nombre.trim());
         }
-        return buscarSecuencialRecursivo(raiz, nombre.trim());
+        return encontrado;
     }
 
     private Plato buscarSecuencialRecursivo(cNodoABB p, String nombre){
-        if(p == null){
-            return null;
+        Plato encontrado = null;
+        if(p != null){
+            if(p.getValor() != null && p.getValor().getNombre() != null 
+                    && p.getValor().getNombre().equalsIgnoreCase(nombre)){
+                encontrado = p.getValor();
+            } else {
+                encontrado = buscarSecuencialRecursivo(p.getIzq(), nombre);
+                if(encontrado == null){
+                    encontrado = buscarSecuencialRecursivo(p.getDer(), nombre);
+                }
+            }
         }
-        if(p.getValor() != null && p.getValor().getNombre() != null 
-                && p.getValor().getNombre().equalsIgnoreCase(nombre)){
-            return p.getValor();
-        }
-        Plato encontrado = buscarSecuencialRecursivo(p.getIzq(), nombre);
-        if(encontrado != null){
-            return encontrado;
-        }
-        return buscarSecuencialRecursivo(p.getDer(), nombre);
+        return encontrado;
     }
 
     // busqueda indexada (binaria) recursiva que desciende por izquierda (<0) o derecha (>0)
     public Plato buscarIndexada(String nombre){
-        if(nombre == null || raiz == null){
-            return null;
+        Plato encontrado = null;
+        if(nombre != null && raiz != null){
+            encontrado = buscarIndexadaRecursivo(raiz, nombre.trim());
         }
-        return buscarIndexadaRecursivo(raiz, nombre.trim());
+        return encontrado;
     }
 
     private Plato buscarIndexadaRecursivo(cNodoABB p, String nombre){
-        if(p == null){
-            return null;
+        Plato encontrado = null;
+        if(p != null){
+            int cmp = nombre.compareToIgnoreCase(p.getValor().getNombre());
+            if(cmp == 0){
+                encontrado = p.getValor();
+            } else if(cmp < 0){
+                encontrado = buscarIndexadaRecursivo(p.getIzq(), nombre);
+            } else {
+                encontrado = buscarIndexadaRecursivo(p.getDer(), nombre);
+            }
         }
-        int cmp = nombre.compareToIgnoreCase(p.getValor().getNombre());
-        if(cmp == 0){
-            return p.getValor();
-        } else if(cmp < 0){
-            return buscarIndexadaRecursivo(p.getIzq(), nombre);
-        } else {
-            return buscarIndexadaRecursivo(p.getDer(), nombre);
-        }
+        return encontrado;
     }
 
     // cuenta de nodos de forma recursiva
     public int contar(){
-        return contarNodos(raiz);
+        int total = contarNodos(raiz);
+        return total;
     }
 
     public int contarNodos(cNodoABB p){
-        if(p == null){
-            return 0;
+        int total = 0;
+        if(p != null){
+            total = 1 + contarNodos(p.getIzq()) + contarNodos(p.getDer());
         }
-        return 1 + contarNodos(p.getIzq()) + contarNodos(p.getDer());
+        return total;
     }
 
     // devuelve arreglo nativo con los platos ordenados alfabeticamente para alimentar JTable
@@ -127,12 +135,13 @@ public class cABBPlatos {
     }
 
     private int llenarEnOrden(cNodoABB p, Plato arreglo[], int indice){
+        int nuevoIndice = indice;
         if(p != null){
-            indice = llenarEnOrden(p.getIzq(), arreglo, indice);
-            arreglo[indice++] = p.getValor();
-            indice = llenarEnOrden(p.getDer(), arreglo, indice);
+            nuevoIndice = llenarEnOrden(p.getIzq(), arreglo, nuevoIndice);
+            arreglo[nuevoIndice++] = p.getValor();
+            nuevoIndice = llenarEnOrden(p.getDer(), arreglo, nuevoIndice);
         }
-        return indice;
+        return nuevoIndice;
     }
 
     // recorridos en String exactamente al estilo del Apendice A.4

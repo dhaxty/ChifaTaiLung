@@ -38,58 +38,58 @@ public class AtencionController {
 
     // segun matriz de permisos de la seccion 4, tanto ADMIN como EMPLEADO gestionan la atencion
     public boolean tienePermiso(){
-        return rolActual != null && (rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO);
+        boolean tiene = false;
+        if(rolActual != null && (rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO)){
+            tiene = true;
+        }
+        return tiene;
     }
 
     // encola un cliente asignando automaticamente turno y orden de llegada secuencial
     public String encolar(String nombreCliente, Prioridad prioridad){
+        String mensaje = "";
         if(!tienePermiso()){
-            return "Acceso denegado: no cuenta con permisos para registrar en la cola de atención.";
+            mensaje = "Acceso denegado: no cuenta con permisos para registrar en la cola de atención.";
+        } else if(nombreCliente == null || nombreCliente.trim().isEmpty()){
+            mensaje = "El nombre del cliente es obligatorio.";
+        } else if(prioridad == null){
+            mensaje = "La prioridad del cliente es obligatoria.";
+        } else {
+            ClienteAtencion nuevo = new ClienteAtencion(siguienteTurno, nombreCliente.trim(), prioridad, siguienteOrdenLlegada);
+            siguienteTurno++;
+            siguienteOrdenLlegada++;
+            oCola.incluir(nuevo);
         }
-        if(nombreCliente == null || nombreCliente.trim().isEmpty()){
-            return "El nombre del cliente es obligatorio.";
-        }
-        if(prioridad == null){
-            return "La prioridad del cliente es obligatoria.";
-        }
-
-        ClienteAtencion nuevo = new ClienteAtencion(siguienteTurno, nombreCliente.trim(), prioridad, siguienteOrdenLlegada);
-        siguienteTurno++;
-        siguienteOrdenLlegada++;
-
-        oCola.incluir(nuevo);
-        return "";
+        return mensaje;
     }
 
     // sobrecarga para registrar cliente existente respetando o normalizando su turno u orden
     public String encolar(ClienteAtencion cliente){
+        String mensaje = "";
         if(!tienePermiso()){
-            return "Acceso denegado: no cuenta con permisos para registrar en la cola de atención.";
-        }
-        if(cliente == null){
-            return "El cliente no puede ser nulo.";
-        }
-        if(cliente.getNombreCliente() == null || cliente.getNombreCliente().trim().isEmpty()){
-            return "El nombre del cliente es obligatorio.";
-        }
-        if(cliente.getPrioridad() == null){
-            return "La prioridad del cliente es obligatoria.";
-        }
+            mensaje = "Acceso denegado: no cuenta con permisos para registrar en la cola de atención.";
+        } else if(cliente == null){
+            mensaje = "El cliente no puede ser nulo.";
+        } else if(cliente.getNombreCliente() == null || cliente.getNombreCliente().trim().isEmpty()){
+            mensaje = "El nombre del cliente es obligatorio.";
+        } else if(cliente.getPrioridad() == null){
+            mensaje = "La prioridad del cliente es obligatoria.";
+        } else {
+            if(cliente.getNumeroTurno() <= 0){
+                cliente.setNumeroTurno(siguienteTurno++);
+            } else if(cliente.getNumeroTurno() >= siguienteTurno){
+                siguienteTurno = cliente.getNumeroTurno() + 1;
+            }
 
-        if(cliente.getNumeroTurno() <= 0){
-            cliente.setNumeroTurno(siguienteTurno++);
-        } else if(cliente.getNumeroTurno() >= siguienteTurno){
-            siguienteTurno = cliente.getNumeroTurno() + 1;
-        }
+            if(cliente.getOrdenLlegada() <= 0){
+                cliente.setOrdenLlegada(siguienteOrdenLlegada++);
+            } else if(cliente.getOrdenLlegada() >= siguienteOrdenLlegada){
+                siguienteOrdenLlegada = cliente.getOrdenLlegada() + 1;
+            }
 
-        if(cliente.getOrdenLlegada() <= 0){
-            cliente.setOrdenLlegada(siguienteOrdenLlegada++);
-        } else if(cliente.getOrdenLlegada() >= siguienteOrdenLlegada){
-            siguienteOrdenLlegada = cliente.getOrdenLlegada() + 1;
+            oCola.incluir(cliente);
         }
-
-        oCola.incluir(cliente);
-        return "";
+        return mensaje;
     }
 
     // sinonimo para registrar cliente en la cola
@@ -99,18 +99,18 @@ public class AtencionController {
 
     // atiende y desencola al cliente prioritario al frente de la cola
     public String atender(){
+        String mensaje = "";
         if(!tienePermiso()){
-            return "Acceso denegado: no cuenta con permisos para atender clientes.";
+            mensaje = "Acceso denegado: no cuenta con permisos para atender clientes.";
+        } else if(oCola.estaVacia()){
+            mensaje = "La cola de atención está vacía. No hay clientes por atender.";
+        } else {
+            ultimoAtendido = oCola.eliminar();
+            if(ultimoAtendido == null){
+                mensaje = "No se pudo atender al cliente.";
+            }
         }
-        if(oCola.estaVacia()){
-            return "La cola de atención está vacía. No hay clientes por atender.";
-        }
-
-        ultimoAtendido = oCola.eliminar();
-        if(ultimoAtendido == null){
-            return "No se pudo atender al cliente.";
-        }
-        return "";
+        return mensaje;
     }
 
     // sinonimo descriptivo para desencolar
@@ -138,37 +138,44 @@ public class AtencionController {
     }
 
     public boolean estaVacia(){
-        return oCola.estaVacia();
+        boolean vacia = false;
+        if(oCola.estaVacia()){
+            vacia = true;
+        }
+        return vacia;
     }
 
     // restablece la cola a vacia
     public String vaciarCola(){
+        String mensaje = "";
         if(!tienePermiso()){
-            return "Acceso denegado: no cuenta con permisos para vaciar la cola.";
+            mensaje = "Acceso denegado: no cuenta con permisos para vaciar la cola.";
+        } else {
+            oCola.colaVacia();
+            ultimoAtendido = null;
         }
-        oCola.colaVacia();
-        ultimoAtendido = null;
-        return "";
+        return mensaje;
     }
 
     // carga clientes de prueba con llegadas intercaladas para demostrar la prioridad y FIFO
     public String cargarDatosPrueba(){
+        String mensaje = "";
         if(!tienePermiso()){
-            return "Acceso denegado: no cuenta con permisos para cargar datos de prueba.";
+            mensaje = "Acceso denegado: no cuenta con permisos para cargar datos de prueba.";
+        } else {
+            vaciarCola();
+            siguienteTurno = 1;
+            siguienteOrdenLlegada = 1L;
+
+            // llegada intercalada de clientes representativos en un chifa
+            encolar("Juan Carlos Mendoza", Prioridad.REGULAR);
+            encolar("Rosa Elvira Huamán (Adulto mayor)", Prioridad.PREFERENCIAL);
+            encolar("Carlos Alberto Wong", Prioridad.REGULAR);
+            encolar("María Elena Torres (Madre gestante)", Prioridad.PREFERENCIAL);
+            encolar("Pedro Chang Salazar", Prioridad.REGULAR);
+            encolar("José Antonio Vega (Persona con discapacidad)", Prioridad.PREFERENCIAL);
+            encolar("Sofía Luna Quispe", Prioridad.REGULAR);
         }
-        vaciarCola();
-        siguienteTurno = 1;
-        siguienteOrdenLlegada = 1L;
-
-        // llegada intercalada de clientes representativos en un chifa
-        encolar("Juan Carlos Mendoza", Prioridad.REGULAR);
-        encolar("Rosa Elvira Huamán (Adulto mayor)", Prioridad.PREFERENCIAL);
-        encolar("Carlos Alberto Wong", Prioridad.REGULAR);
-        encolar("María Elena Torres (Madre gestante)", Prioridad.PREFERENCIAL);
-        encolar("Pedro Chang Salazar", Prioridad.REGULAR);
-        encolar("José Antonio Vega (Persona con discapacidad)", Prioridad.PREFERENCIAL);
-        encolar("Sofía Luna Quispe", Prioridad.REGULAR);
-
-        return "";
+        return mensaje;
     }
 }

@@ -27,108 +27,120 @@ public class cListaPedidos {
     }
 
     public boolean estaVacia(){
-        return primero == null;
+        boolean vacia = false;
+        if(primero == null){
+            vacia = true;
+        }
+        return vacia;
     }
 
     // inserta un nuevo pedido al final de la lista de forma iterativa validando unicidad de numero
     public boolean insertar(Pedido valor){
-        if(valor == null) return false;
-        if(valor.getNumero() == null || valor.getNumero().trim().isEmpty()) return false;
-        if(buscar(valor.getNumero().trim()) != null) return false;
-
-        nuevo = new cNodoPedido(valor);
-        if(primero == null){
-            primero = nuevo;
-        } else {
-            p = primero;
-            while(p.getSig() != null){
-                p = p.getSig();
+        boolean insertado = false;
+        if(valor != null && valor.getNumero() != null && !valor.getNumero().trim().isEmpty() && buscar(valor.getNumero().trim()) == null){
+            nuevo = new cNodoPedido(valor);
+            if(primero == null){
+                primero = nuevo;
+            } else {
+                p = primero;
+                while(p.getSig() != null){
+                    p = p.getSig();
+                }
+                p.setSig(nuevo);
             }
-            p.setSig(nuevo);
+            cantidad++;
+            insertado = true;
         }
-        cantidad++;
-        return true;
+        return insertado;
     } // fin insertar
 
     // busca por identificador y actualiza cliente, mesa y detalles sin alterar el numero original
     public boolean actualizar(String id, Pedido datosNuevos){
-        if(id == null || datosNuevos == null) return false;
-        p = primero;
-        while(p != null){
-            if(p.getValor() != null && p.getValor().getNumero() != null
-                    && p.getValor().getNumero().equalsIgnoreCase(id.trim())){
-                p.getValor().setNombreCliente(datosNuevos.getNombreCliente());
-                p.getValor().setNumeroMesa(datosNuevos.getNumeroMesa());
+        boolean actualizado = false;
+        if(id != null && datosNuevos != null){
+            p = primero;
+            while(p != null && !actualizado){
+                if(p.getValor() != null && p.getValor().getNumero() != null
+                        && p.getValor().getNumero().equalsIgnoreCase(id.trim())){
+                    p.getValor().setNombreCliente(datosNuevos.getNombreCliente());
+                    p.getValor().setNumeroMesa(datosNuevos.getNumeroMesa());
 
-                DetallePedido nuevosDetalles[] = datosNuevos.getDetalles();
-                int totalNuevos = datosNuevos.getCantidadDetalles();
-                for(int i = 0; i < 10; i++){
-                    if(i < totalNuevos){
-                        p.getValor().getDetalles()[i] = nuevosDetalles[i];
-                    } else {
-                        p.getValor().getDetalles()[i] = null;
+                    DetallePedido nuevosDetalles[] = datosNuevos.getDetalles();
+                    int totalNuevos = datosNuevos.getCantidadDetalles();
+                    for(int i = 0; i < 10; i++){
+                        if(i < totalNuevos){
+                            p.getValor().getDetalles()[i] = nuevosDetalles[i];
+                        } else {
+                            p.getValor().getDetalles()[i] = null;
+                        }
                     }
+                    p.getValor().setCantidadDetalles(totalNuevos);
+                    actualizado = true;
                 }
-                p.getValor().setCantidadDetalles(totalNuevos);
-                return true;
+                p = p.getSig();
             }
-            p = p.getSig();
         }
-        return false;
+        return actualizado;
     } // fin actualizar
 
     // elimina el pedido coincidente reacomodando enlaces de forma iterativa
     public boolean eliminar(String id){
-        if(primero == null || id == null) return false;
-
-        if(primero.getValor() != null && primero.getValor().getNumero() != null
-                && primero.getValor().getNumero().equalsIgnoreCase(id.trim())){
-            primero = primero.getSig();
-            cantidad--;
-            return true;
-        }
-
-        cNodoPedido ant = primero;
-        p = primero.getSig();
-        while(p != null){
-            if(p.getValor() != null && p.getValor().getNumero() != null
-                    && p.getValor().getNumero().equalsIgnoreCase(id.trim())){
-                ant.setSig(p.getSig());
+        boolean eliminado = false;
+        if(primero != null && id != null){
+            if(primero.getValor() != null && primero.getValor().getNumero() != null
+                    && primero.getValor().getNumero().equalsIgnoreCase(id.trim())){
+                primero = primero.getSig();
                 cantidad--;
-                return true;
+                eliminado = true;
+            } else {
+                cNodoPedido ant = primero;
+                p = primero.getSig();
+                while(p != null && !eliminado){
+                    if(p.getValor() != null && p.getValor().getNumero() != null
+                            && p.getValor().getNumero().equalsIgnoreCase(id.trim())){
+                        ant.setSig(p.getSig());
+                        cantidad--;
+                        eliminado = true;
+                    } else {
+                        ant = p;
+                    }
+                    p = p.getSig();
+                }
             }
-            ant = p;
-            p = p.getSig();
         }
-        return false;
+        return eliminado;
     } // fin eliminar
 
     // busqueda iterativa por identificador que retorna el pedido o null
     public Pedido buscar(String id){
-        if(id == null || primero == null) return null;
-        p = primero;
-        while(p != null){
-            if(p.getValor() != null && p.getValor().getNumero() != null
-                    && p.getValor().getNumero().equalsIgnoreCase(id.trim())){
-                return p.getValor();
+        Pedido encontrado = null;
+        if(id != null && primero != null){
+            p = primero;
+            while(p != null && encontrado == null){
+                if(p.getValor() != null && p.getValor().getNumero() != null
+                        && p.getValor().getNumero().equalsIgnoreCase(id.trim())){
+                    encontrado = p.getValor();
+                }
+                p = p.getSig();
             }
-            p = p.getSig();
         }
-        return null;
+        return encontrado;
     } // fin buscar
 
     // devuelve un arreglo exacto Pedido[] con los pedidos registrados para JTable
     public Pedido[] listar(){
+        Pedido resultado[];
         if(primero == null || cantidad == 0){
-            return new Pedido[0];
-        }
-        Pedido resultado[] = new Pedido[cantidad];
-        p = primero;
-        int i = 0;
-        while(p != null && i < cantidad){
-            resultado[i] = p.getValor();
-            p = p.getSig();
-            i++;
+            resultado = new Pedido[0];
+        } else {
+            resultado = new Pedido[cantidad];
+            p = primero;
+            int i = 0;
+            while(p != null && i < cantidad){
+                resultado[i] = p.getValor();
+                p = p.getSig();
+                i++;
+            }
         }
         return resultado;
     } // fin listar

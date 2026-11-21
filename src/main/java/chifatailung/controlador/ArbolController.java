@@ -28,11 +28,19 @@ public class ArbolController {
 
     // segun matriz de permisos de la seccion 4, solo ADMIN puede registrar platos en el arbol
     public boolean puedeModificar(){
-        return rolActual == Rol.ADMIN;
+        boolean puede = false;
+        if(rolActual == Rol.ADMIN){
+            puede = true;
+        }
+        return puede;
     }
 
     public boolean tienePermisoConsulta(){
-        return rolActual != null && (rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO);
+        boolean tiene = false;
+        if(rolActual != null && (rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO)){
+            tiene = true;
+        }
+        return tiene;
     }
 
     public int getCantidad(){
@@ -40,62 +48,66 @@ public class ArbolController {
     }
 
     public boolean estaVacio(){
-        return oABB.estaVacio();
+        boolean vacio = false;
+        if(oABB.estaVacio()){
+            vacio = true;
+        }
+        return vacio;
     }
 
     // valida permisos y campos antes de ingresar un plato al arbol binario
     public String insertar(String codigo, String nombre, String categoria, double precio, boolean disponible){
+        String mensaje = "";
         if(!puedeModificar()){
-            return "Acceso denegado: solo el Administrador puede registrar platos en el árbol.";
+            mensaje = "Acceso denegado: solo el Administrador puede registrar platos en el árbol.";
+        } else if(codigo == null || codigo.trim().isEmpty()){
+            mensaje = "El código del plato es obligatorio.";
+        } else if(nombre == null || nombre.trim().isEmpty()){
+            mensaje = "El nombre del plato es obligatorio.";
+        } else if(categoria == null || categoria.trim().isEmpty()){
+            mensaje = "La categoría es obligatoria.";
+        } else if(precio < 0){
+            mensaje = "El precio no puede ser negativo.";
+        } else if(oABB.buscarIndexada(nombre.trim()) != null){
+            // verificacion previa para mensaje explicativo al usuario
+            mensaje = "Ya existe un plato registrado con el nombre: " + nombre.trim();
+        } else {
+            Plato plato = new Plato(codigo.trim(), nombre.trim(), categoria.trim(), precio, disponible);
+            boolean insertado = oABB.ingresarValor(plato);
+            if(!insertado){
+                mensaje = "No se pudo registrar el plato en el árbol.";
+            }
         }
-        if(codigo == null || codigo.trim().isEmpty()){
-            return "El código del plato es obligatorio.";
-        }
-        if(nombre == null || nombre.trim().isEmpty()){
-            return "El nombre del plato es obligatorio.";
-        }
-        if(categoria == null || categoria.trim().isEmpty()){
-            return "La categoría es obligatoria.";
-        }
-        if(precio < 0){
-            return "El precio no puede ser negativo.";
-        }
-
-        // verificacion previa para mensaje explicativo al usuario
-        if(oABB.buscarIndexada(nombre.trim()) != null){
-            return "Ya existe un plato registrado con el nombre: " + nombre.trim();
-        }
-
-        Plato plato = new Plato(codigo.trim(), nombre.trim(), categoria.trim(), precio, disponible);
-        boolean insertado = oABB.ingresarValor(plato);
-        if(!insertado){
-            return "No se pudo registrar el plato en el árbol.";
-        }
-        return "";
+        return mensaje;
     }
 
     // sobrecarga para insertar directamente un objeto Plato
     public String insertar(Plato plato){
+        String mensaje = "";
         if(plato == null){
-            return "El plato no puede ser nulo.";
+            mensaje = "El plato no puede ser nulo.";
+        } else {
+            mensaje = insertar(plato.getCodigo(), plato.getNombre(), plato.getCategoria(), plato.getPrecio(), plato.isDisponible());
         }
-        return insertar(plato.getCodigo(), plato.getNombre(), plato.getCategoria(), plato.getPrecio(), plato.isDisponible());
+        return mensaje;
     }
 
     // busqueda secuencial permitida para administrador y empleado
     public Plato buscarSecuencial(String nombre){
-        if(nombre == null || nombre.trim().isEmpty()){
-            return null;
+        Plato encontrado = null;
+        if(nombre != null && !nombre.trim().isEmpty()){
+            encontrado = oABB.buscarSecuencial(nombre.trim());
         }
-        return oABB.buscarSecuencial(nombre.trim());
+        return encontrado;
     }
 
     // busqueda indexada permitida para administrador y empleado
     public Plato buscarIndexada(String nombre){
-        if(nombre == null || nombre.trim().isEmpty()){
-            return null;
+        Plato encontrado = null;
+        if(nombre != null && !nombre.trim().isEmpty()){
+            encontrado = oABB.buscarIndexada(nombre.trim());
         }
-        return oABB.buscarIndexada(nombre.trim());
+        return encontrado;
     }
 
     // devuelve arreglo de platos en orden alfabetico para JTable
@@ -115,11 +127,13 @@ public class ArbolController {
 
     // vaciado del arbol restringido a rol administrador
     public String vaciarArbol(){
+        String mensaje = "";
         if(!puedeModificar()){
-            return "Acceso denegado: solo el Administrador puede vaciar el árbol.";
+            mensaje = "Acceso denegado: solo el Administrador puede vaciar el árbol.";
+        } else {
+            oABB.arbolVacio();
         }
-        oABB.arbolVacio();
-        return "";
+        return mensaje;
     }
 
     // carga platos de prueba representativos para probar busquedas y recorridos

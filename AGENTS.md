@@ -127,13 +127,11 @@ marcado como **NO VERIFICADO** y se informa. Jamás se espera indefinidamente.
 - Para verificar compilación, usar **solo** uno de estos, en este orden:
   1. `mvn -B -ntp -q compile` (`-B` = modo no interactivo, `-ntp` = sin barra de
      progreso de descargas).
-  2. Si Maven no existe, no responde o no tiene red (ver 1.1.1):
-     `javac -encoding UTF-8 --release 25 -d target/tmp-check @fuentes.txt`, donde
-     `fuentes.txt` lista los `.java` de `src/main/java` (generar la lista con
-     `find src/main/java -name "*.java" > fuentes.txt` en Linux, o
-     `Get-ChildItem -Recurse src/main/java -Filter *.java | % FullName` en
-     PowerShell). No necesita red ni plugins. Borrar `fuentes.txt` y
-     `target/tmp-check` al terminar; no subirlos al repositorio.
+  2. Si Maven no existe, no responde o falla por bloqueo en `.m2` (ver 1.1.1):
+     invocar el compilador con ruta completa usando `$env:TEMP` para temporales:
+     `& "C:\Program Files\Java\jdk-25.0.5.0.3\bin\javac.exe" -encoding UTF-8 --release 25 -cp "$env:USERPROFILE\.m2\repository\com\formdev\flatlaf\3.8\flatlaf-3.8.jar;$env:USERPROFILE\.m2\repository\com\formdev\flatlaf-extras\3.8\flatlaf-extras-3.8.jar;$env:TEMP\tmp-check" -d "$env:TEMP\tmp-check" "@$env:TEMP\fuentes.txt"`
+     (generando `fuentes.txt` con `(Get-ChildItem -Recurse src/main/java -Filter *.java).FullName | Set-Content -Encoding UTF8 "$env:TEMP\fuentes.txt"` y borrando ambos temporales al terminar). Para ejecutar pruebas `Main...`, usar `& "C:\Program Files\Java\jdk-25.0.5.0.3\bin\java.exe"`.
+- **Prohibido** ejecutar `javac` o `java` sin ruta completa en Windows (el acceso directo `C:\Program Files\Common Files\Oracle\Java\javapath\` se congela en el sandbox) ni lanzar `javac -version` o `java -version` en segundo plano.
 - **Prohibido** ejecutar la aplicación Swing o cualquier `main` que abra una
   ventana (`exec:java`, `java -jar`, `java ...ChifaTaiLung`, `mvn exec:*`,
   `mvn package` seguido de ejecución). Una ventana Swing **nunca termina sola** y

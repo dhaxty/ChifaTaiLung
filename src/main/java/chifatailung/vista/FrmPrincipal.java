@@ -147,7 +147,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         lblIconoAtencion = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
         cardComprobantes = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
@@ -163,6 +162,9 @@ public class FrmPrincipal extends javax.swing.JFrame {
         jLabel20 = new javax.swing.JLabel();
         lblIconoMesas = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
+        pnlIntegrantes = new javax.swing.JPanel();
+        lblIntegrantesTitulo = new javax.swing.JLabel();
+        lblIntegrantesNombres = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -399,7 +401,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlTarjetas.add(cardCarta);
@@ -449,7 +451,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel9)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlTarjetas.add(cardPedidos);
@@ -472,21 +474,17 @@ public class FrmPrincipal extends javax.swing.JFrame {
         lblIconoAtencion.setOpaque(true);
         lblIconoAtencion.setPreferredSize(new java.awt.Dimension(46, 46));
 
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel12.setText("Atender al siguiente en la fila.");
-
         javax.swing.GroupLayout cardAtencionLayout = new javax.swing.GroupLayout(cardAtencion);
         cardAtencion.setLayout(cardAtencionLayout);
         cardAtencionLayout.setHorizontalGroup(
             cardAtencionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(cardAtencionLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(cardAtencionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(cardAtencionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblIconoAtencion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
         cardAtencionLayout.setVerticalGroup(
             cardAtencionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -497,9 +495,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel12)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(40, Short.MAX_VALUE))
         );
 
         pnlTarjetas.add(cardAtencion);
@@ -549,7 +545,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel15)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlTarjetas.add(cardComprobantes);
@@ -599,7 +595,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 .addComponent(jLabel17)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel18)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlTarjetas.add(cardBuscar);
@@ -649,12 +645,27 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 .addComponent(jLabel20)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel21)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlTarjetas.add(cardMesas);
 
         pnlContenido.add(pnlTarjetas, java.awt.BorderLayout.CENTER);
+
+        pnlIntegrantes.setOpaque(false);
+        pnlIntegrantes.setPreferredSize(new java.awt.Dimension(100, 46));
+        pnlIntegrantes.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 13));
+
+        lblIntegrantesTitulo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblIntegrantesTitulo.setForeground(new java.awt.Color(25, 25, 25));
+        lblIntegrantesTitulo.setText("Integrantes:");
+        pnlIntegrantes.add(lblIntegrantesTitulo);
+
+        lblIntegrantesNombres.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblIntegrantesNombres.setText("Lujan Otiniano Joseph  •  Fretel Llajaruna Alexander  •  Alban Manuyama Fabiano");
+        pnlIntegrantes.add(lblIntegrantesNombres);
+
+        pnlContenido.add(pnlIntegrantes, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(pnlContenido, java.awt.BorderLayout.CENTER);
 
@@ -687,7 +698,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
@@ -711,6 +721,8 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel lblIconoComprobantes;
     private javax.swing.JLabel lblIconoMesas;
     private javax.swing.JLabel lblIconoPedidos;
+    private javax.swing.JLabel lblIntegrantesNombres;
+    private javax.swing.JLabel lblIntegrantesTitulo;
     private javax.swing.JLabel lblMascota;
     private javax.swing.JLabel lblRolBadge;
     private javax.swing.JLabel lblSesionTitulo;
@@ -718,6 +730,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel lblUsuarioActivo;
     private javax.swing.JPanel pnlBanner;
     private javax.swing.JPanel pnlContenido;
+    private javax.swing.JPanel pnlIntegrantes;
     private javax.swing.JPanel pnlLateral;
     private javax.swing.JPanel pnlTarjetas;
     private javax.swing.JSeparator sepLogo;

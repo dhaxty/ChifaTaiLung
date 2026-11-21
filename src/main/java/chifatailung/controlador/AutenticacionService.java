@@ -18,35 +18,42 @@ public class AutenticacionService {
 
     // genera el hash SHA-256 de la contrasena para no guardarla en texto plano
     public static String calcularHash(String clave){
-        if(clave == null) return "";
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte digest[] = md.digest(clave.getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder();
-            for(int i = 0; i < digest.length; i++){
-                sb.append(String.format("%02x", digest[i]));
+        String hash = "";
+        if(clave != null){
+            try {
+                MessageDigest md = MessageDigest.getInstance("SHA-256");
+                byte digest[] = md.digest(clave.getBytes(StandardCharsets.UTF_8));
+                StringBuilder sb = new StringBuilder();
+                for(int i = 0; i < digest.length; i++){
+                    sb.append(String.format("%02x", digest[i]));
+                }
+                hash = sb.toString();
+            } catch (NoSuchAlgorithmException e) {
+                hash = clave;
             }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            return clave;
         }
+        return hash;
     }
 
     // busca el usuario y compara el hash de la clave; devuelve null si falla
     public Usuario autenticar(String usuario, String clave){
-        if(usuario == null || clave == null) return null;
-        String usuarioLimpio = usuario.trim();
-        if(usuarioLimpio.isEmpty() || clave.isEmpty()) return null;
-
-        String hashIngresado = calcularHash(clave);
-        for(int i = 0; i < usuarios.length; i++){
-            if(usuarios[i] != null && usuarios[i].getUsuario().equalsIgnoreCase(usuarioLimpio)){
-                if(usuarios[i].getClaveHash().equals(hashIngresado)){
-                    return usuarios[i];
+        Usuario encontrado = null;
+        if(usuario != null && clave != null){
+            String usuarioLimpio = usuario.trim();
+            if(!usuarioLimpio.isEmpty() && !clave.isEmpty()){
+                String hashIngresado = calcularHash(clave);
+                int i = 0;
+                while(i < usuarios.length && encontrado == null){
+                    if(usuarios[i] != null && usuarios[i].getUsuario().equalsIgnoreCase(usuarioLimpio)){
+                        if(usuarios[i].getClaveHash().equals(hashIngresado)){
+                            encontrado = usuarios[i];
+                        }
+                    }
+                    i++;
                 }
             }
         }
-        return null;
+        return encontrado;
     }
 
     public Usuario[] getUsuarios(){

@@ -20,20 +20,20 @@ public class AuthController {
 
     // valida campos y autentica credenciales; devuelve "" si es correcto o el mensaje de error
     public String iniciarSesion(String usuario, String clave){
+        String mensaje = "";
         if(usuario == null || usuario.trim().isEmpty()){
-            return "El nombre de usuario es obligatorio.";
+            mensaje = "El nombre de usuario es obligatorio.";
+        } else if(clave == null || clave.trim().isEmpty()){
+            mensaje = "La contraseña es obligatoria.";
+        } else {
+            Usuario u = servicio.autenticar(usuario, clave);
+            if(u == null){
+                mensaje = "Credenciales incorrectas. Verifique usuario y contraseña.";
+            } else {
+                this.usuarioAutenticado = u;
+            }
         }
-        if(clave == null || clave.trim().isEmpty()){
-            return "La contraseña es obligatoria.";
-        }
-
-        Usuario u = servicio.autenticar(usuario, clave);
-        if(u == null){
-            return "Credenciales incorrectas. Verifique usuario y contraseña.";
-        }
-
-        this.usuarioAutenticado = u;
-        return "";
+        return mensaje;
     }
 
     public Usuario getUsuarioAutenticado(){
@@ -41,11 +41,19 @@ public class AuthController {
     }
 
     public Rol getRolAutenticado(){
-        return (usuarioAutenticado != null) ? usuarioAutenticado.getRol() : null;
+        Rol rol = null;
+        if(usuarioAutenticado != null){
+            rol = usuarioAutenticado.getRol();
+        }
+        return rol;
     }
 
     public boolean estaAutenticado(){
-        return usuarioAutenticado != null;
+        boolean autenticado = false;
+        if(usuarioAutenticado != null){
+            autenticado = true;
+        }
+        return autenticado;
     }
 
     public void cerrarSesion(){

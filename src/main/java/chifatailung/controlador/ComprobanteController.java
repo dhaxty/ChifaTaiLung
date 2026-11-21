@@ -28,66 +28,70 @@ public class ComprobanteController {
 
     // segun matriz de permisos de la seccion 4, tanto ADMIN como EMPLEADO gestionan comprobantes
     public boolean tienePermiso(){
-        return rolActual != null && (rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO);
+        boolean tiene = false;
+        if(rolActual != null && (rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO)){
+            tiene = true;
+        }
+        return tiene;
     }
 
     // valida campos obligatorios, identificador unico, importe no negativo y capacidad de pila
     public String registrar(String numero, String concepto, String tipo, double importe){
+        String mensaje = "";
         if(!tienePermiso()){
-            return "Acceso denegado: no cuenta con permisos para registrar comprobantes.";
+            mensaje = "Acceso denegado: no cuenta con permisos para registrar comprobantes.";
+        } else if(oPila.estaLlena()){
+            mensaje = "La pila de comprobantes está llena (capacidad máxima: " + oPila.getCapacidad() + ").";
+        } else if(numero == null || numero.trim().isEmpty()){
+            mensaje = "El número de comprobante es obligatorio.";
+        } else if(concepto == null || concepto.trim().isEmpty()){
+            mensaje = "El concepto del comprobante es obligatorio.";
+        } else if(tipo == null || tipo.trim().isEmpty()){
+            mensaje = "El tipo de comprobante es obligatorio.";
+        } else if(importe < 0){
+            mensaje = "El importe del comprobante no puede ser negativo.";
+        } else if(oPila.buscar(numero) != null){
+            mensaje = "Ya existe un comprobante registrado con el número " + numero.trim() + ".";
+        } else {
+            boolean insertado = oPila.insertar(new Comprobante(numero.trim(), concepto.trim(), tipo.trim(), importe));
+            if(!insertado){
+                mensaje = "No se pudo apilar el comprobante (la pila está llena).";
+            }
         }
-        if(oPila.estaLlena()){
-            return "La pila de comprobantes está llena (capacidad máxima: " + oPila.getCapacidad() + ").";
-        }
-        if(numero == null || numero.trim().isEmpty()){
-            return "El número de comprobante es obligatorio.";
-        }
-        if(concepto == null || concepto.trim().isEmpty()){
-            return "El concepto del comprobante es obligatorio.";
-        }
-        if(tipo == null || tipo.trim().isEmpty()){
-            return "El tipo de comprobante es obligatorio.";
-        }
-        if(importe < 0){
-            return "El importe del comprobante no puede ser negativo.";
-        }
-        if(oPila.buscar(numero) != null){
-            return "Ya existe un comprobante registrado con el número " + numero.trim() + ".";
-        }
-
-        boolean insertado = oPila.insertar(new Comprobante(numero.trim(), concepto.trim(), tipo.trim(), importe));
-        if(!insertado){
-            return "No se pudo apilar el comprobante (la pila está llena).";
-        }
-        return "";
+        return mensaje;
     }
 
     // sobrecarga para registrar recibiendo un objeto Comprobante
     public String registrar(Comprobante comprobante){
+        String mensaje = "";
         if(comprobante == null){
-            return "El comprobante no puede ser nulo.";
+            mensaje = "El comprobante no puede ser nulo.";
+        } else {
+            mensaje = registrar(comprobante.getNumero(), comprobante.getConcepto(), comprobante.getTipo(), comprobante.getImporte());
         }
-        return registrar(comprobante.getNumero(), comprobante.getConcepto(), comprobante.getTipo(), comprobante.getImporte());
+        return mensaje;
     }
 
     // desapila el comprobante de la cima; devuelve mensaje de error o vacio si fue exitoso
     public String desapilar(){
+        String mensaje = "";
         if(!tienePermiso()){
-            return "Acceso denegado: no cuenta con permisos para desapilar comprobantes.";
+            mensaje = "Acceso denegado: no cuenta con permisos para desapilar comprobantes.";
+        } else if(oPila.estaVacia()){
+            mensaje = "La pila está vacía. No hay comprobantes para desapilar.";
+        } else {
+            Comprobante eliminado = oPila.eliminar();
+            if(eliminado == null){
+                mensaje = "No se pudo desapilar el comprobante.";
+            }
         }
-        if(oPila.estaVacia()){
-            return "La pila está vacía. No hay comprobantes para desapilar.";
-        }
-        Comprobante eliminado = oPila.eliminar();
-        if(eliminado == null){
-            return "No se pudo desapilar el comprobante.";
-        }
-        return "";
+        return mensaje;
     }
 
     // sinonimo para eliminarTope requerido por la consigna
     public String eliminarTope(){
-        return desapilar();
+        String mensaje = desapilar();
+        return mensaje;
     }
 
     // consulta el comprobante en el tope de la pila sin removerlo
@@ -131,37 +135,48 @@ public class ComprobanteController {
     }
 
     public boolean estaVacia(){
-        return oPila.estaVacia();
+        boolean vacia = false;
+        if(oPila.estaVacia()){
+            vacia = true;
+        }
+        return vacia;
     }
 
     public boolean estaLlena(){
-        return oPila.estaLlena();
+        boolean llena = false;
+        if(oPila.estaLlena()){
+            llena = true;
+        }
+        return llena;
     }
 
     // restablece la pila a vacia
     public String vaciarPila(){
+        String mensaje = "";
         if(!tienePermiso()){
-            return "Acceso denegado: no cuenta con permisos para vaciar la pila.";
+            mensaje = "Acceso denegado: no cuenta con permisos para vaciar la pila.";
+        } else {
+            oPila.pilaVacia();
         }
-        oPila.pilaVacia();
-        return "";
+        return mensaje;
     }
 
     // carga comprobantes tipicos de prueba para el boton del formulario
     public String cargarDatosPrueba(){
+        String mensaje = "";
         if(!tienePermiso()){
-            return "Acceso denegado: no cuenta con permisos para cargar datos de prueba.";
+            mensaje = "Acceso denegado: no cuenta con permisos para cargar datos de prueba.";
+        } else {
+            // reinicia la pila
+            oPila.pilaVacia();
+
+            // apila consumos simulados representativos de un chifa
+            registrar("B001-000101", "Consumo Salón - Mesa 2 (Chaulafán y Wantán)", "Boleta", 58.50);
+            registrar("B001-000102", "Consumo Salón - Mesa 5 (Arroz Chaufa Especial)", "Boleta", 42.00);
+            registrar("F001-000030", "Almuerzo Ejecutivo Corporativo (Mesa 8)", "Factura", 185.00);
+            registrar("B001-000103", "Banquete Familiar Tai Lung (Mesa 11)", "Boleta", 260.00);
+            registrar("B001-000104", "Consumo Pareja - Mesa 1 (Kam Lu Wantán)", "Boleta", 74.50);
         }
-        // reinicia la pila
-        oPila.pilaVacia();
-
-        // apila consumos simulados representativos de un chifa
-        registrar("B001-000101", "Consumo Salón - Mesa 2 (Chaulafán y Wantán)", "Boleta", 58.50);
-        registrar("B001-000102", "Consumo Salón - Mesa 5 (Arroz Chaufa Especial)", "Boleta", 42.00);
-        registrar("F001-000030", "Almuerzo Ejecutivo Corporativo (Mesa 8)", "Factura", 185.00);
-        registrar("B001-000103", "Banquete Familiar Tai Lung (Mesa 11)", "Boleta", 260.00);
-        registrar("B001-000104", "Consumo Pareja - Mesa 1 (Kam Lu Wantán)", "Boleta", 74.50);
-
-        return "";
+        return mensaje;
     }
 }

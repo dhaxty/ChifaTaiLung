@@ -22,37 +22,37 @@ public class Pedido {
 
     // agrega un detalle validando limites y datos; rechaza el detalle 11 devolviendo false
     public boolean agregarDetalle(DetallePedido detalle){
-        if(detalle == null) return false;
-        if(detalle.getCantidad() < 1) return false;
-        if(detalle.getPrecioUnitario() < 0) return false;
-        if(cantidadDetalles >= 10) return false;
-
-        detalles[cantidadDetalles] = detalle;
-        cantidadDetalles++;
-        return true;
+        boolean agregado = false;
+        if(detalle != null && detalle.getCantidad() >= 1 && detalle.getPrecioUnitario() >= 0 && cantidadDetalles < 10){
+            detalles[cantidadDetalles] = detalle;
+            cantidadDetalles++;
+            agregado = true;
+        }
+        return agregado;
     }
 
     // edita un detalle en la posicion indicada sin alterar la cantidad de detalles
     public boolean editarDetalle(int indice, DetallePedido detalle){
-        if(indice < 0 || indice >= cantidadDetalles) return false;
-        if(detalle == null) return false;
-        if(detalle.getCantidad() < 1) return false;
-        if(detalle.getPrecioUnitario() < 0) return false;
-
-        detalles[indice] = detalle;
-        return true;
+        boolean editado = false;
+        if(indice >= 0 && indice < cantidadDetalles && detalle != null && detalle.getCantidad() >= 1 && detalle.getPrecioUnitario() >= 0){
+            detalles[indice] = detalle;
+            editado = true;
+        }
+        return editado;
     }
 
     // elimina un detalle realizando corrimiento manual hacia la izquierda
     public boolean quitarDetalle(int indice){
-        if(indice < 0 || indice >= cantidadDetalles) return false;
-
-        for(int i = indice; i < cantidadDetalles - 1; i++){
-            detalles[i] = detalles[i + 1];
+        boolean quitado = false;
+        if(indice >= 0 && indice < cantidadDetalles){
+            for(int i = indice; i < cantidadDetalles - 1; i++){
+                detalles[i] = detalles[i + 1];
+            }
+            detalles[cantidadDetalles - 1] = null;
+            cantidadDetalles--;
+            quitado = true;
         }
-        detalles[cantidadDetalles - 1] = null;
-        cantidadDetalles--;
-        return true;
+        return quitado;
     }
 
     // calcula el total recorriendo estrictamente de 0 a cantidadDetalles - 1
@@ -77,8 +77,11 @@ public class Pedido {
 
     // obtiene un detalle por indice de posicion
     public DetallePedido obtenerDetalle(int indice){
-        if(indice < 0 || indice >= cantidadDetalles) return null;
-        return detalles[indice];
+        DetallePedido detalle = null;
+        if(indice >= 0 && indice < cantidadDetalles){
+            detalle = detalles[indice];
+        }
+        return detalle;
     }
 
     public String getNumero(){

@@ -30,7 +30,11 @@ public class MesaController {
 
     // segun matriz de permisos, tanto ADMIN como EMPLEADO gestionan mesas
     public boolean puedeModificar(){
-        return rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO;
+        boolean puede = false;
+        if(rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO){
+            puede = true;
+        }
+        return puede;
     }
 
     // devuelve la matriz de mesas completa para renderizar el salon
@@ -45,29 +49,29 @@ public class MesaController {
 
     // busca una mesa por su identificador numerico
     public Mesa buscar(int numero){
-        if(numero < 1 || numero > oMatriz.getTotalMesas()){
-            return null;
+        Mesa mesa = null;
+        if(numero >= 1 && numero <= oMatriz.getTotalMesas()){
+            mesa = oMatriz.buscar(numero);
         }
-        return oMatriz.buscar(numero);
+        return mesa;
     }
 
     // valida permisos, rango y estado antes de actualizar; retorna vacio si fue exitoso
     public String cambiarEstado(int numero, EstadoMesa nuevoEstado){
+        String mensaje = "";
         if(!puedeModificar()){
-            return "Acceso denegado: no cuenta con permisos para modificar mesas.";
+            mensaje = "Acceso denegado: no cuenta con permisos para modificar mesas.";
+        } else if(numero < 1 || numero > oMatriz.getTotalMesas()){
+            mensaje = "Número de mesa inválido (debe estar entre 1 y " + oMatriz.getTotalMesas() + ").";
+        } else if(nuevoEstado == null){
+            mensaje = "El estado de la mesa es obligatorio.";
+        } else {
+            boolean actualizado = oMatriz.cambiarEstado(numero, nuevoEstado);
+            if(!actualizado){
+                mensaje = "No se encontró la mesa número " + numero + ".";
+            }
         }
-        if(numero < 1 || numero > oMatriz.getTotalMesas()){
-            return "Número de mesa inválido (debe estar entre 1 y " + oMatriz.getTotalMesas() + ").";
-        }
-        if(nuevoEstado == null){
-            return "El estado de la mesa es obligatorio.";
-        }
-
-        boolean actualizado = oMatriz.cambiarEstado(numero, nuevoEstado);
-        if(!actualizado){
-            return "No se encontró la mesa número " + numero + ".";
-        }
-        return "";
+        return mensaje;
     }
 
     // conteos para indicadores de ocupacion del salon
@@ -89,32 +93,35 @@ public class MesaController {
 
     // restablece todas las mesas del chifa al estado LIBRE
     public String reiniciarMesas(){
+        String mensaje = "";
         if(!puedeModificar()){
-            return "Acceso denegado: no cuenta con permisos para reiniciar mesas.";
+            mensaje = "Acceso denegado: no cuenta con permisos para reiniciar mesas.";
+        } else {
+            oMatriz.matrizVacia();
         }
-        oMatriz.matrizVacia();
-        return "";
+        return mensaje;
     }
 
     // carga una distribucion de prueba con mesas libres, ocupadas y reservadas
     public String cargarDatosPrueba(){
+        String mensaje = "";
         if(!puedeModificar()){
-            return "Acceso denegado: no cuenta con permisos para cargar datos.";
+            mensaje = "Acceso denegado: no cuenta con permisos para cargar datos.";
+        } else {
+            // reinicia a libre primero
+            oMatriz.matrizVacia();
+
+            // mesas ocupadas simulando consumo en el chifa
+            oMatriz.cambiarEstado(2, EstadoMesa.OCUPADA);
+            oMatriz.cambiarEstado(5, EstadoMesa.OCUPADA);
+            oMatriz.cambiarEstado(8, EstadoMesa.OCUPADA);
+            oMatriz.cambiarEstado(11, EstadoMesa.OCUPADA);
+
+            // mesas reservadas con anticipacion
+            oMatriz.cambiarEstado(3, EstadoMesa.RESERVADA);
+            oMatriz.cambiarEstado(7, EstadoMesa.RESERVADA);
+            oMatriz.cambiarEstado(14, EstadoMesa.RESERVADA);
         }
-        // reinicia a libre primero
-        oMatriz.matrizVacia();
-
-        // mesas ocupadas simulando consumo en el chifa
-        oMatriz.cambiarEstado(2, EstadoMesa.OCUPADA);
-        oMatriz.cambiarEstado(5, EstadoMesa.OCUPADA);
-        oMatriz.cambiarEstado(8, EstadoMesa.OCUPADA);
-        oMatriz.cambiarEstado(11, EstadoMesa.OCUPADA);
-
-        // mesas reservadas con anticipacion
-        oMatriz.cambiarEstado(3, EstadoMesa.RESERVADA);
-        oMatriz.cambiarEstado(7, EstadoMesa.RESERVADA);
-        oMatriz.cambiarEstado(14, EstadoMesa.RESERVADA);
-
-        return "";
+        return mensaje;
     }
 }

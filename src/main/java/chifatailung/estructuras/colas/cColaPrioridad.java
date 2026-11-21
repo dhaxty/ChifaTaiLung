@@ -31,36 +31,41 @@ public class cColaPrioridad {
     }
 
     public boolean estaVacia(){
-        return first == null;
+        boolean vacia = false;
+        if(first == null){
+            vacia = true;
+        }
+        return vacia;
     }
 
     // incluye un cliente insertandolo segun prioridad (menor nivel antes) y FIFO estable por ordenLlegada
     public void incluir(ClienteAtencion valor){
-        if(valor == null) return;
-        nuevo = new cNodoCola(valor);
+        if(valor != null){
+            nuevo = new cNodoCola(valor);
 
-        if(first == null){
-            first = nuevo;
-            last = nuevo;
-        } else {
-            // si el nuevo tiene mayor prioridad que el primero (menor numero de nivel)
-            if(nuevo.getValor().getPrioridad().getNivel() < first.getValor().getPrioridad().getNivel()){
-                nuevo.setSig(first);
+            if(first == null){
                 first = nuevo;
+                last = nuevo;
             } else {
-                p = first;
-                // avanza mientras el siguiente tenga prioridad estrictamente mayor o igual (para respetar FIFO)
-                while(p.getSig() != null && p.getSig().getValor().getPrioridad().getNivel() <= nuevo.getValor().getPrioridad().getNivel()){
-                    p = p.getSig();
-                }
-                nuevo.setSig(p.getSig());
-                p.setSig(nuevo);
-                if(nuevo.getSig() == null){
-                    last = nuevo;
+                // si el nuevo tiene mayor prioridad que el primero (menor numero de nivel)
+                if(nuevo.getValor().getPrioridad().getNivel() < first.getValor().getPrioridad().getNivel()){
+                    nuevo.setSig(first);
+                    first = nuevo;
+                } else {
+                    p = first;
+                    // avanza mientras el siguiente tenga prioridad estrictamente mayor o igual (para respetar FIFO)
+                    while(p.getSig() != null && p.getSig().getValor().getPrioridad().getNivel() <= nuevo.getValor().getPrioridad().getNivel()){
+                        p = p.getSig();
+                    }
+                    nuevo.setSig(p.getSig());
+                    p.setSig(nuevo);
+                    if(nuevo.getSig() == null){
+                        last = nuevo;
+                    }
                 }
             }
+            cantidad++;
         }
-        cantidad++;
     } // fin incluir
 
     // desencola y devuelve el cliente al frente; devuelve null si la cola esta vacia
@@ -88,16 +93,18 @@ public class cColaPrioridad {
 
     // devuelve un arreglo exacto con los clientes en orden de atencion para alimentar JTable
     public ClienteAtencion[] listar(){
+        ClienteAtencion resultado[];
         if(first == null || cantidad == 0){
-            return new ClienteAtencion[0];
-        }
-        ClienteAtencion resultado[] = new ClienteAtencion[cantidad];
-        p = first;
-        int i = 0;
-        while(p != null && i < cantidad){
-            resultado[i] = p.getValor();
-            p = p.getSig();
-            i++;
+            resultado = new ClienteAtencion[0];
+        } else {
+            resultado = new ClienteAtencion[cantidad];
+            p = first;
+            int i = 0;
+            while(p != null && i < cantidad){
+                resultado[i] = p.getValor();
+                p = p.getSig();
+                i++;
+            }
         }
         return resultado;
     } // fin listar
