@@ -921,7 +921,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         jButton2.addActionListener(e -> editarDetalle());
         jButton3.addActionListener(e -> quitarDetalle());
 
-        btnRegistrar.addActionListener(e -> registrarPedido());
         btnActualizar.addActionListener(e -> actualizarPedido());
         btnLimpiar.addActionListener(e -> limpiarFormulario());
 
