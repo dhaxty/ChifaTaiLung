@@ -1,19 +1,40 @@
 package chifatailung.vista;
 
+import chifatailung.modelo.Rol;
+import chifatailung.modelo.Usuario;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import java.awt.Color;
 import java.awt.Insets;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.SwingConstants;
 
 public class FrmPrincipal extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmPrincipal.class.getName());
-    private chifatailung.modelo.Usuario oUsuario;
+    private static ImageIcon gifChaufaCache;
+    private Usuario oUsuario;
 
     public FrmPrincipal() {
+        this(new Usuario("admin", "", Rol.ADMIN));
+    }
+    
+    public FrmPrincipal(Usuario oUsuario) {
         initComponents();
+        this.oUsuario = (oUsuario != null) ? oUsuario : new Usuario("admin", "", Rol.ADMIN);
         
-        setIconImage(new javax.swing.ImageIcon(getClass().getResource("/logo140px.png")).getImage());
+        configurarVentana();
+        cargarAnimacion();
+        conectarNavegacion();
+        actualizarSesionUI();
+    }
+
+    private void configurarVentana() {
+        java.net.URL urlLogo = getClass().getResource("/logo140px.png");
+        if (urlLogo != null) {
+            setIconImage(new ImageIcon(urlLogo).getImage());
+        } else {
+            setIconImage(new ImageIcon("src/main/resources/logo140px.png").getImage());
+        }
         getRootPane().putClientProperty("FlatLaf.fullWindowContent", true);
 
         JButton[] botonesMenu = {
@@ -37,34 +58,23 @@ public class FrmPrincipal extends javax.swing.JFrame {
         lblRolBadge.putClientProperty("FlatLaf.style", "arc: 999");
         
         btnCerrarSesion.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
-        
-        javax.swing.JPanel[] tarjetas = {
-            cardCarta, cardPedidos, cardAtencion, cardComprobantes, cardBuscar, cardMesas
-        };
-        for (javax.swing.JPanel card : tarjetas) {
-            card.putClientProperty("FlatLaf.style", "arc: 20; border: 1,1,1,1,#E6DFD3");
-            card.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        }
-        javax.swing.JLabel[] iconosTarjeta = {
-            lblIconoCarta, lblIconoPedidos, lblIconoAtencion,
-            lblIconoComprobantes, lblIconoBuscar, lblIconoMesas
-        };
-        for (javax.swing.JLabel lbl : iconosTarjeta) {
-            lbl.putClientProperty("FlatLaf.style", "arc: 14; border: 1,1,1,1,#E6DFD3");
-        }
+    }
 
-        lblIconoCarta.setIcon(iconoTarjeta("carta.svg"));
-        lblIconoPedidos.setIcon(iconoTarjeta("pedidos.svg"));
-        lblIconoAtencion.setIcon(iconoTarjeta("clientes.svg"));
-        lblIconoComprobantes.setIcon(iconoTarjeta("comprobantes.svg"));
-        lblIconoBuscar.setIcon(iconoTarjeta("buscar.svg"));
-        lblIconoMesas.setIcon(iconoTarjeta("mesas.svg"));
-        
-        btnCerrarSesion.addActionListener(e -> {
-            new FrmLogin().setVisible(true);
-            dispose();
-        });
+    private void cargarAnimacion() {
+        if (gifChaufaCache == null) {
+            java.net.URL urlGif = getClass().getResource("/loopChaufa.gif");
+            if (urlGif != null) {
+                gifChaufaCache = new ImageIcon(urlGif);
+            } else {
+                gifChaufaCache = new ImageIcon("src/main/resources/loopChaufa.gif");
+            }
+        }
+        lblAnimacion.setHorizontalAlignment(SwingConstants.CENTER);
+        lblAnimacion.setIcon(gifChaufaCache);
+        pnlAnimacion.putClientProperty("FlatLaf.style", "arc: 20; border: 1,1,1,1,#D8C3A0");
+    }
 
+    private void conectarNavegacion() {
         btnCarta.addActionListener(e -> {
             new FrmPlatos(oUsuario).setVisible(true);
             dispose();
@@ -89,68 +99,26 @@ public class FrmPrincipal extends javax.swing.JFrame {
             new FrmMesas(oUsuario).setVisible(true);
             dispose();
         });
-
-        conectarTarjeta(cardCarta, () -> {
-            new FrmPlatos(oUsuario).setVisible(true);
-            dispose();
-        });
-        conectarTarjeta(cardPedidos, () -> {
-            new FrmPedidos(oUsuario).setVisible(true);
-            dispose();
-        });
-        conectarTarjeta(cardAtencion, () -> {
-            new FrmAtencion(oUsuario).setVisible(true);
-            dispose();
-        });
-        conectarTarjeta(cardComprobantes, () -> {
-            new FrmComprobantes(oUsuario).setVisible(true);
-            dispose();
-        });
-        conectarTarjeta(cardBuscar, () -> {
-            new FrmArbol(oUsuario).setVisible(true);
-            dispose();
-        });
-        conectarTarjeta(cardMesas, () -> {
-            new FrmMesas(oUsuario).setVisible(true);
+        btnCerrarSesion.addActionListener(e -> {
+            new FrmLogin().setVisible(true);
             dispose();
         });
     }
-    
-    public FrmPrincipal(chifatailung.modelo.Usuario oUsuario) {
-    this();
-    this.oUsuario = (oUsuario != null) ? oUsuario : new chifatailung.modelo.Usuario("admin", "", chifatailung.modelo.Rol.ADMIN);
-    lblUsuarioActivo.setText(this.oUsuario.getUsuario());
-    if (this.oUsuario.getRol() == chifatailung.modelo.Rol.ADMIN)
-        lblRolBadge.setText("Administrador");
-    else
-        lblRolBadge.setText("Empleado");
-    
-    }
 
-    private void conectarTarjeta(javax.swing.JPanel card, Runnable accion) {
-        java.awt.Cursor cursorMano = java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR);
-        card.setCursor(cursorMano);
-        java.awt.event.MouseAdapter adapter = new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                accion.run();
+    private void actualizarSesionUI() {
+        if (oUsuario != null) {
+            lblUsuarioActivo.setText(oUsuario.getUsuario());
+            if (oUsuario.getRol() == Rol.ADMIN) {
+                lblRolBadge.setText("Administrador");
+            } else {
+                lblRolBadge.setText("Empleado");
             }
-        };
-        card.addMouseListener(adapter);
-        for (java.awt.Component comp : card.getComponents()) {
-            comp.setCursor(cursorMano);
-            comp.addMouseListener(adapter);
         }
     }
+
     private FlatSVGIcon iconoMenu(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 20, 20);
         icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> Color.WHITE));
-        return icono;
-    }
-
-    private FlatSVGIcon iconoTarjeta(String nombreArchivo) {
-        FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 22, 22);
-        icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> new Color(140, 19, 22)));
         return icono;
     }
     @SuppressWarnings("unchecked")
@@ -177,35 +145,8 @@ public class FrmPrincipal extends javax.swing.JFrame {
         lblMascota = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         pnlTarjetas = new javax.swing.JPanel();
-        cardCarta = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        lblIconoCarta = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        cardPedidos = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        lblIconoPedidos = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        cardAtencion = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        lblIconoAtencion = new javax.swing.JLabel();
-        cardComprobantes = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        lblIconoComprobantes = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        cardBuscar = new javax.swing.JPanel();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        lblIconoBuscar = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        cardMesas = new javax.swing.JPanel();
-        jLabel19 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
-        lblIconoMesas = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
+        pnlAnimacion = new javax.swing.JPanel();
+        lblAnimacion = new javax.swing.JLabel();
         pnlIntegrantes = new javax.swing.JPanel();
         lblIntegrantesTitulo = new javax.swing.JLabel();
         lblIntegrantesNombres = new javax.swing.JLabel();
@@ -398,301 +339,15 @@ public class FrmPrincipal extends javax.swing.JFrame {
         pnlContenido.add(pnlBanner, java.awt.BorderLayout.NORTH);
 
         pnlTarjetas.setOpaque(false);
-        pnlTarjetas.setLayout(new java.awt.GridLayout(2, 3, 18, 18));
+        pnlTarjetas.setLayout(new java.awt.BorderLayout());
 
-        cardCarta.setBackground(new java.awt.Color(255, 255, 255));
+        pnlAnimacion.setBackground(new java.awt.Color(255, 253, 248));
+        pnlAnimacion.setLayout(new java.awt.BorderLayout());
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(25, 25, 25));
-        jLabel5.setText("Carta");
+        lblAnimacion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        pnlAnimacion.add(lblAnimacion, java.awt.BorderLayout.CENTER);
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(43, 26, 18));
-        jLabel6.setText("Platos y precios del restaurante.");
-
-        lblIconoCarta.setBackground(new java.awt.Color(251, 232, 166));
-        lblIconoCarta.setForeground(new java.awt.Color(140, 19, 22));
-        lblIconoCarta.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblIconoCarta.setMaximumSize(new java.awt.Dimension(46, 46));
-        lblIconoCarta.setMinimumSize(new java.awt.Dimension(46, 4));
-        lblIconoCarta.setOpaque(true);
-        lblIconoCarta.setPreferredSize(new java.awt.Dimension(46, 46));
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel4.setText("Agregar, editar, eliminar y ver platos");
-
-        javax.swing.GroupLayout cardCartaLayout = new javax.swing.GroupLayout(cardCarta);
-        cardCarta.setLayout(cardCartaLayout);
-        cardCartaLayout.setHorizontalGroup(
-            cardCartaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardCartaLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(cardCartaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblIconoCarta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(22, Short.MAX_VALUE))
-        );
-        cardCartaLayout.setVerticalGroup(
-            cardCartaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardCartaLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(lblIconoCarta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pnlTarjetas.add(cardCarta);
-
-        cardPedidos.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(25, 25, 25));
-        jLabel7.setText("Pedidos");
-
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(43, 26, 18));
-        jLabel8.setText("Registro de pedidos y total vendido.");
-
-        lblIconoPedidos.setBackground(new java.awt.Color(251, 232, 166));
-        lblIconoPedidos.setForeground(new java.awt.Color(140, 19, 22));
-        lblIconoPedidos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblIconoPedidos.setMaximumSize(new java.awt.Dimension(46, 46));
-        lblIconoPedidos.setMinimumSize(new java.awt.Dimension(46, 4));
-        lblIconoPedidos.setOpaque(true);
-        lblIconoPedidos.setPreferredSize(new java.awt.Dimension(46, 46));
-
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel9.setText("Registrar, modificar y ver el total.");
-
-        javax.swing.GroupLayout cardPedidosLayout = new javax.swing.GroupLayout(cardPedidos);
-        cardPedidos.setLayout(cardPedidosLayout);
-        cardPedidosLayout.setHorizontalGroup(
-            cardPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardPedidosLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(cardPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblIconoPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(23, Short.MAX_VALUE))
-        );
-        cardPedidosLayout.setVerticalGroup(
-            cardPedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardPedidosLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(lblIconoPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel9)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pnlTarjetas.add(cardPedidos);
-
-        cardAtencion.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(25, 25, 25));
-        jLabel10.setText("Atención de clientes");
-
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(43, 26, 18));
-        jLabel11.setText("<html>Clientes en espera, los prioritarios<br>primero.</html>");
-
-        lblIconoAtencion.setBackground(new java.awt.Color(251, 232, 166));
-        lblIconoAtencion.setForeground(new java.awt.Color(140, 19, 22));
-        lblIconoAtencion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblIconoAtencion.setMaximumSize(new java.awt.Dimension(46, 46));
-        lblIconoAtencion.setMinimumSize(new java.awt.Dimension(46, 4));
-        lblIconoAtencion.setOpaque(true);
-        lblIconoAtencion.setPreferredSize(new java.awt.Dimension(46, 46));
-
-        javax.swing.GroupLayout cardAtencionLayout = new javax.swing.GroupLayout(cardAtencion);
-        cardAtencion.setLayout(cardAtencionLayout);
-        cardAtencionLayout.setHorizontalGroup(
-            cardAtencionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardAtencionLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(cardAtencionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblIconoAtencion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10))
-                .addContainerGap(38, Short.MAX_VALUE))
-        );
-        cardAtencionLayout.setVerticalGroup(
-            cardAtencionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardAtencionLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(lblIconoAtencion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
-        );
-
-        pnlTarjetas.add(cardAtencion);
-
-        cardComprobantes.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel13.setForeground(new java.awt.Color(25, 25, 25));
-        jLabel13.setText("Comprobantes");
-
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(43, 26, 18));
-        jLabel14.setText("Boletas emitidas");
-
-        lblIconoComprobantes.setBackground(new java.awt.Color(251, 232, 166));
-        lblIconoComprobantes.setForeground(new java.awt.Color(140, 19, 22));
-        lblIconoComprobantes.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblIconoComprobantes.setMaximumSize(new java.awt.Dimension(46, 46));
-        lblIconoComprobantes.setMinimumSize(new java.awt.Dimension(46, 4));
-        lblIconoComprobantes.setOpaque(true);
-        lblIconoComprobantes.setPreferredSize(new java.awt.Dimension(46, 46));
-
-        jLabel15.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel15.setText("Emitir y revisar boletas.");
-
-        javax.swing.GroupLayout cardComprobantesLayout = new javax.swing.GroupLayout(cardComprobantes);
-        cardComprobantes.setLayout(cardComprobantesLayout);
-        cardComprobantesLayout.setHorizontalGroup(
-            cardComprobantesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardComprobantesLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(cardComprobantesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblIconoComprobantes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel13)
-                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(102, Short.MAX_VALUE))
-        );
-        cardComprobantesLayout.setVerticalGroup(
-            cardComprobantesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardComprobantesLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(lblIconoComprobantes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel14)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel15)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pnlTarjetas.add(cardComprobantes);
-
-        cardBuscar.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel16.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel16.setForeground(new java.awt.Color(25, 25, 25));
-        jLabel16.setText("Buscar platos");
-
-        jLabel17.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel17.setForeground(new java.awt.Color(43, 26, 18));
-        jLabel17.setText("Encuentra un plato por su nombre.");
-
-        lblIconoBuscar.setBackground(new java.awt.Color(251, 232, 166));
-        lblIconoBuscar.setForeground(new java.awt.Color(140, 19, 22));
-        lblIconoBuscar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblIconoBuscar.setMaximumSize(new java.awt.Dimension(46, 46));
-        lblIconoBuscar.setMinimumSize(new java.awt.Dimension(46, 4));
-        lblIconoBuscar.setOpaque(true);
-        lblIconoBuscar.setPreferredSize(new java.awt.Dimension(46, 46));
-
-        jLabel18.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel18.setText("Ver la lista de platos ordenada.");
-
-        javax.swing.GroupLayout cardBuscarLayout = new javax.swing.GroupLayout(cardBuscar);
-        cardBuscar.setLayout(cardBuscarLayout);
-        cardBuscarLayout.setHorizontalGroup(
-            cardBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardBuscarLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(cardBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblIconoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel16)
-                    .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(29, Short.MAX_VALUE))
-        );
-        cardBuscarLayout.setVerticalGroup(
-            cardBuscarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardBuscarLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(lblIconoBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel16)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel17)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel18)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pnlTarjetas.add(cardBuscar);
-
-        cardMesas.setBackground(new java.awt.Color(255, 255, 255));
-
-        jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel19.setForeground(new java.awt.Color(25, 25, 25));
-        jLabel19.setText("Mesas");
-
-        jLabel20.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel20.setForeground(new java.awt.Color(43, 26, 18));
-        jLabel20.setText("Plano del salón del restaurante.");
-
-        lblIconoMesas.setBackground(new java.awt.Color(251, 232, 166));
-        lblIconoMesas.setForeground(new java.awt.Color(140, 19, 22));
-        lblIconoMesas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblIconoMesas.setMaximumSize(new java.awt.Dimension(46, 46));
-        lblIconoMesas.setMinimumSize(new java.awt.Dimension(46, 4));
-        lblIconoMesas.setOpaque(true);
-        lblIconoMesas.setPreferredSize(new java.awt.Dimension(46, 46));
-
-        jLabel21.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel21.setText("Cambiar el estado de cada mesa.");
-
-        javax.swing.GroupLayout cardMesasLayout = new javax.swing.GroupLayout(cardMesas);
-        cardMesas.setLayout(cardMesasLayout);
-        cardMesasLayout.setHorizontalGroup(
-            cardMesasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardMesasLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(cardMesasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblIconoMesas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel19)
-                    .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(43, Short.MAX_VALUE))
-        );
-        cardMesasLayout.setVerticalGroup(
-            cardMesasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(cardMesasLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(lblIconoMesas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel19)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel20)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel21)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pnlTarjetas.add(cardMesas);
+        pnlTarjetas.add(pnlAnimacion, java.awt.BorderLayout.CENTER);
 
         pnlContenido.add(pnlTarjetas, java.awt.BorderLayout.CENTER);
 
@@ -730,38 +385,10 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnComprobantes;
     private javax.swing.JButton btnMesas;
     private javax.swing.JButton btnPedidos;
-    private javax.swing.JPanel cardAtencion;
-    private javax.swing.JPanel cardBuscar;
-    private javax.swing.JPanel cardCarta;
-    private javax.swing.JPanel cardComprobantes;
-    private javax.swing.JPanel cardMesas;
-    private javax.swing.JPanel cardPedidos;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JLabel lblIconoAtencion;
-    private javax.swing.JLabel lblIconoBuscar;
-    private javax.swing.JLabel lblIconoCarta;
-    private javax.swing.JLabel lblIconoComprobantes;
-    private javax.swing.JLabel lblIconoMesas;
-    private javax.swing.JLabel lblIconoPedidos;
+    private javax.swing.JLabel lblAnimacion;
     private javax.swing.JLabel lblIntegrantesNombres;
     private javax.swing.JLabel lblIntegrantesTitulo;
     private javax.swing.JLabel lblMascota;
@@ -769,6 +396,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel lblSesionTitulo;
     private javax.swing.JLabel lblTituloBanner;
     private javax.swing.JLabel lblUsuarioActivo;
+    private javax.swing.JPanel pnlAnimacion;
     private javax.swing.JPanel pnlBanner;
     private javax.swing.JPanel pnlContenido;
     private javax.swing.JPanel pnlIntegrantes;
