@@ -69,6 +69,7 @@ public class FrmPrincipal extends javax.swing.JFrame {
                 gifChaufaCache = new ImageIcon("src/main/resources/loopChaufa.gif");
             }
         }
+        lblAnimacion.setOpaque(false);
         lblAnimacion.setHorizontalAlignment(SwingConstants.CENTER);
         lblAnimacion.setIcon(gifChaufaCache);
         pnlAnimacion.putClientProperty("FlatLaf.style", "arc: 20; border: 1,1,1,1,#D8C3A0");
