@@ -81,17 +81,86 @@ public class FrmPrincipal extends javax.swing.JFrame {
             new FrmLogin().setVisible(true);
             dispose();
         });
+
+        // navegacion de los botones laterales hacia los modulos del sistema
+        btnCarta.addActionListener(e -> {
+            new FrmPlatos(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnPedidos.addActionListener(e -> {
+            new FrmPedidos(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnAtencion.addActionListener(e -> {
+            new FrmAtencion(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnComprobantes.addActionListener(e -> {
+            new FrmComprobantes(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnBuscar.addActionListener(e -> {
+            new FrmArbol(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnMesas.addActionListener(e -> {
+            new FrmMesas(oUsuario).setVisible(true);
+            dispose();
+        });
+
+        // navegacion de las tarjetas centrales interactivas
+        conectarTarjeta(cardCarta, () -> {
+            new FrmPlatos(oUsuario).setVisible(true);
+            dispose();
+        });
+        conectarTarjeta(cardPedidos, () -> {
+            new FrmPedidos(oUsuario).setVisible(true);
+            dispose();
+        });
+        conectarTarjeta(cardAtencion, () -> {
+            new FrmAtencion(oUsuario).setVisible(true);
+            dispose();
+        });
+        conectarTarjeta(cardComprobantes, () -> {
+            new FrmComprobantes(oUsuario).setVisible(true);
+            dispose();
+        });
+        conectarTarjeta(cardBuscar, () -> {
+            new FrmArbol(oUsuario).setVisible(true);
+            dispose();
+        });
+        conectarTarjeta(cardMesas, () -> {
+            new FrmMesas(oUsuario).setVisible(true);
+            dispose();
+        });
     }
     
     public FrmPrincipal(chifatailung.modelo.Usuario oUsuario) {
     this();
-    this.oUsuario = oUsuario;
-    lblUsuarioActivo.setText(oUsuario.getUsuario());
-    if (oUsuario.getRol() == chifatailung.modelo.Rol.ADMIN)
+    this.oUsuario = (oUsuario != null) ? oUsuario : new chifatailung.modelo.Usuario("admin", "", chifatailung.modelo.Rol.ADMIN);
+    lblUsuarioActivo.setText(this.oUsuario.getUsuario());
+    if (this.oUsuario.getRol() == chifatailung.modelo.Rol.ADMIN)
         lblRolBadge.setText("Administrador");
     else
         lblRolBadge.setText("Empleado");
     
+    }
+
+    // conecta el evento de clic del raton y el cursor a la tarjeta y sus componentes
+    private void conectarTarjeta(javax.swing.JPanel card, Runnable accion) {
+        java.awt.Cursor cursorMano = java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR);
+        card.setCursor(cursorMano);
+        java.awt.event.MouseAdapter adapter = new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                accion.run();
+            }
+        };
+        card.addMouseListener(adapter);
+        for (java.awt.Component comp : card.getComponents()) {
+            comp.setCursor(cursorMano);
+            comp.addMouseListener(adapter);
+        }
     }
     // icono blanco para los botones del menu lateral
     private FlatSVGIcon iconoMenu(String nombreArchivo) {

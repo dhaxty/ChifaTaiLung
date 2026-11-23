@@ -672,11 +672,23 @@ public class FrmPlatos extends javax.swing.JFrame {
         btnVolver.addActionListener(e -> volverAlMenu());
         btnCerrarSesion.addActionListener(e -> cerrarSesion());
 
+        btnCarta.addActionListener(e -> {
+            // Modulo activo actualmente
+        });
         btnAtencion.addActionListener(e -> abrirAtencion());
         btnComprobantes.addActionListener(e -> abrirComprobantes());
-        btnPedidos.addActionListener(e -> abrirModulo("Pedidos"));
-        btnBuscar.addActionListener(e -> abrirModulo("Buscar platos"));
-        btnMesas.addActionListener(e -> abrirModulo("Mesas"));
+        btnPedidos.addActionListener(e -> {
+            new FrmPedidos(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnBuscar.addActionListener(e -> {
+            new FrmArbol(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnMesas.addActionListener(e -> {
+            new FrmMesas(oUsuario).setVisible(true);
+            dispose();
+        });
     }
 
     // carga los datos del plato seleccionado en los controles de entrada
@@ -948,10 +960,6 @@ public class FrmPlatos extends javax.swing.JFrame {
 
     // aviso informativo para modulos laterales todavia no disponibles
     private void abrirModulo(String nombreModulo) {
-        JOptionPane.showMessageDialog(this,
-            "Este módulo aún está en construcción.",
-            nombreModulo,
-            JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**

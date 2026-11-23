@@ -701,8 +701,14 @@ public class FrmArbol extends javax.swing.JFrame {
         btnBuscar.addActionListener(e -> {
             // Ya nos encontramos en el modulo de busqueda en arbol
         });
-        btnPedidos.addActionListener(e -> abrirModulo("Pedidos"));
-        btnMesas.addActionListener(e -> abrirModulo("Mesas"));
+        btnPedidos.addActionListener(e -> {
+            new FrmPedidos(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnMesas.addActionListener(e -> {
+            new FrmMesas(oUsuario).setVisible(true);
+            dispose();
+        });
     }
 
     // realiza la busqueda secuencial o indexada en el arbol segun el combo
@@ -981,10 +987,6 @@ public class FrmArbol extends javax.swing.JFrame {
 
     // aviso informativo para modulos laterales todavia no disponibles
     private void abrirModulo(String nombreModulo) {
-        JOptionPane.showMessageDialog(this,
-            "Este módulo aún está en construcción.",
-            nombreModulo,
-            JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**

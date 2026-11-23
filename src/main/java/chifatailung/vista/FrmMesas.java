@@ -601,7 +601,10 @@ public class FrmMesas extends javax.swing.JFrame {
         btnMesas.addActionListener(e -> {
             // Modulo activo actualmente
         });
-        btnPedidos.addActionListener(e -> abrirModulo("Pedidos"));
+        btnPedidos.addActionListener(e -> {
+            new FrmPedidos(oUsuario).setVisible(true);
+            dispose();
+        });
     }
 
     // selecciona una mesa, actualiza el detalle y refresca el resaltado
@@ -838,10 +841,6 @@ public class FrmMesas extends javax.swing.JFrame {
 
     // aviso informativo para modulos laterales todavia no disponibles
     private void abrirModulo(String nombreModulo) {
-        JOptionPane.showMessageDialog(this,
-            "Este módulo aún está en construcción.",
-            nombreModulo,
-            JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**

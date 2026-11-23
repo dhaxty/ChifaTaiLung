@@ -560,11 +560,29 @@ public class FrmComprobantes extends javax.swing.JFrame {
         btnVerTope.addActionListener(e -> verTope());
         btnCargarPrueba.addActionListener(e -> cargarDatosPrueba());
 
-        btnCarta.addActionListener(e -> abrirModulo("Carta de platos"));
-        btnPedidos.addActionListener(e -> abrirModulo("Pedidos"));
-        btnAtencion.addActionListener(e -> abrirModulo("Atención de clientes"));
-        btnBuscar.addActionListener(e -> abrirModulo("Buscar platos"));
-        btnMesas.addActionListener(e -> abrirModulo("Mesas"));
+        btnCarta.addActionListener(e -> {
+            new FrmPlatos(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnPedidos.addActionListener(e -> {
+            new FrmPedidos(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnAtencion.addActionListener(e -> {
+            new FrmAtencion(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnComprobantes.addActionListener(e -> {
+            // Modulo activo actualmente
+        });
+        btnBuscar.addActionListener(e -> {
+            new FrmArbol(oUsuario).setVisible(true);
+            dispose();
+        });
+        btnMesas.addActionListener(e -> {
+            new FrmMesas(oUsuario).setVisible(true);
+            dispose();
+        });
     }
 
     // registra un comprobante en la cima de la pila previa validacion
@@ -706,10 +724,6 @@ public class FrmComprobantes extends javax.swing.JFrame {
 
     // aviso informativo para modulos laterales todavia no disponibles
     private void abrirModulo(String nombreModulo) {
-        JOptionPane.showMessageDialog(this,
-            "Este módulo aún está en construcción.",
-            nombreModulo,
-            JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
