@@ -5,7 +5,6 @@ import chifatailung.modelo.DetallePedido;
 import chifatailung.modelo.Pedido;
 import chifatailung.modelo.Rol;
 
-// controlador del modulo de pedidos con validaciones de negocio y control de permisos
 public class PedidoController {
     private Rol rolActual;
     private cListaPedidos oLista;
@@ -27,7 +26,7 @@ public class PedidoController {
         return oLista;
     }
 
-    // segun matriz de permisos de la seccion 4, tanto ADMIN como EMPLEADO gestionan pedidos
+    // admin y empleado pueden gestionar pedidos
     public boolean tienePermiso(){
         boolean tiene = false;
         if(rolActual != null && (rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO)){
@@ -44,7 +43,6 @@ public class PedidoController {
         return oLista.totalGeneral();
     }
 
-    // valida permisos y campos completos antes de insertar el pedido en la lista
     public String registrar(Pedido pedido){
         String mensaje = "";
         if(!tienePermiso()){
@@ -64,7 +62,6 @@ public class PedidoController {
         } else if(pedido.getCantidadDetalles() > 10){
             mensaje = "El pedido no puede superar el límite máximo de 10 detalles.";
         } else {
-            // validacion de cada detalle del pedido
             int i = 0;
             while(i < pedido.getCantidadDetalles() && mensaje.isEmpty()){
                 DetallePedido det = pedido.getDetalles()[i];
@@ -91,7 +88,6 @@ public class PedidoController {
         return mensaje;
     }
 
-    // sobrecarga para registrar un pedido recibiendo un arreglo de detalles
     public String registrar(String numero, String nombreCliente, int numeroMesa, DetallePedido detalles[]){
         Pedido nuevoPedido = new Pedido(numero, nombreCliente, numeroMesa);
         if(detalles != null){
@@ -105,7 +101,6 @@ public class PedidoController {
         return mensaje;
     }
 
-    // sobrecarga para registrar un pedido inicial con su primer detalle
     public String registrar(String numero, String nombreCliente, int numeroMesa,
                             String codigoPlato, String nombrePlato, int cantidad, double precioUnitario){
         Pedido nuevoPedido = new Pedido(numero, nombreCliente, numeroMesa);
@@ -114,14 +109,12 @@ public class PedidoController {
         return mensaje;
     }
 
-    // sobrecarga que valida regla de minimo 1 detalle al intentar crear un pedido sin items
     public String registrar(String numero, String nombreCliente, int numeroMesa){
         Pedido nuevoPedido = new Pedido(numero, nombreCliente, numeroMesa);
         String mensaje = registrar(nuevoPedido);
         return mensaje;
     }
 
-    // modifica cliente y mesa de un pedido existente preservando su identificador original
     public String actualizar(String numero, String nombreCliente, int numeroMesa){
         String mensaje = "";
         if(!tienePermiso()){
@@ -144,7 +137,6 @@ public class PedidoController {
         return mensaje;
     }
 
-    // sobrecarga para actualizar datos y detalles de un pedido completo preservando el numero
     public String actualizar(String id, Pedido datosNuevos){
         String mensaje = "";
         if(!tienePermiso()){
@@ -170,7 +162,6 @@ public class PedidoController {
         return mensaje;
     }
 
-    // elimina un pedido de la lista por su identificador
     public String eliminar(String numero){
         String mensaje = "";
         if(!tienePermiso()){
@@ -186,7 +177,6 @@ public class PedidoController {
         return mensaje;
     }
 
-    // busca un pedido por su identificador unico
     public Pedido buscar(String numero){
         Pedido encontrado = null;
         if(numero != null && !numero.trim().isEmpty()){
@@ -195,12 +185,10 @@ public class PedidoController {
         return encontrado;
     }
 
-    // devuelve todos los pedidos para alimentar la tabla principal
     public Pedido[] listar(){
         return oLista.listar();
     }
 
-    // agrega un detalle a un pedido existente validando que no exceda 10 items
     public String agregarDetalleAPedido(String numeroPedido, DetallePedido detalle){
         String mensaje = "";
         if(!tienePermiso()){
@@ -233,14 +221,12 @@ public class PedidoController {
         return mensaje;
     }
 
-    // sobrecarga para agregar detalle mediante campos individuales
     public String agregarDetalleAPedido(String numeroPedido, String codigoPlato, String nombrePlato,
                                        int cantidad, double precioUnitario){
         String mensaje = agregarDetalleAPedido(numeroPedido, new DetallePedido(codigoPlato, nombrePlato, cantidad, precioUnitario));
         return mensaje;
     }
 
-    // edita un detalle especifico dentro de un pedido existente
     public String editarDetalleDePedido(String numeroPedido, int indice, DetallePedido detalle){
         String mensaje = "";
         if(!tienePermiso()){
@@ -273,14 +259,12 @@ public class PedidoController {
         return mensaje;
     }
 
-    // sobrecarga para editar detalle mediante campos individuales
     public String editarDetalleDePedido(String numeroPedido, int indice, String codigoPlato,
                                        String nombrePlato, int cantidad, double precioUnitario){
         String mensaje = editarDetalleDePedido(numeroPedido, indice, new DetallePedido(codigoPlato, nombrePlato, cantidad, precioUnitario));
         return mensaje;
     }
 
-    // quita un detalle por indice garantizando que el pedido conserve al menos 1 detalle
     public String quitarDetalleDePedido(String numeroPedido, int indice){
         String mensaje = "";
         if(!tienePermiso()){
@@ -294,6 +278,7 @@ public class PedidoController {
             } else if(indice < 0 || indice >= pedido.getCantidadDetalles()){
                 mensaje = "Índice de detalle fuera de rango.";
             } else if(pedido.getCantidadDetalles() <= 1){
+                // regla de negocio pedido minimo un detalle
                 mensaje = "No se puede quitar el detalle: el pedido debe conservar al menos 1 detalle (o elimine el pedido completo).";
             } else {
                 boolean quitado = pedido.quitarDetalle(indice);
@@ -305,7 +290,6 @@ public class PedidoController {
         return mensaje;
     }
 
-    // limpia todos los pedidos de la lista
     public String reiniciarPedidos(){
         String mensaje = "";
         if(!tienePermiso()){
@@ -316,7 +300,6 @@ public class PedidoController {
         return mensaje;
     }
 
-    // carga pedidos de prueba representativos para probar el modulo sin depender de otros
     public String cargarDatosPrueba(){
         String mensaje = "";
         if(!tienePermiso()){
@@ -324,26 +307,22 @@ public class PedidoController {
         } else {
             oLista.listaVacia();
 
-            // Pedido 1: consumo familiar en salon
             Pedido p1 = new Pedido("PED-001", "Familia Wong", 3);
             p1.agregarDetalle(new DetallePedido("P002", "Arroz Chaufa Especial", 2, 24.00));
             p1.agregarDetalle(new DetallePedido("P006", "Sopa Wantán Especial", 1, 16.00));
             p1.agregarDetalle(new DetallePedido("P012", "Chicha Morada 1L", 1, 10.00));
             oLista.insertar(p1);
 
-            // Pedido 2: almuerzo personal
             Pedido p2 = new Pedido("PED-002", "Carlos Mendoza", 8);
             p2.agregarDetalle(new DetallePedido("P009", "Pollo ChiJauKay", 1, 25.00));
             p2.agregarDetalle(new DetallePedido("P008", "Wantán Frito (6 unid.)", 1, 12.00));
             oLista.insertar(p2);
 
-            // Pedido 3: mesa compartida
             Pedido p3 = new Pedido("PED-003", "Lucía Salazar", 12);
             p3.agregarDetalle(new DetallePedido("P003", "Aeropuerto de Pollo", 1, 22.00));
             p3.agregarDetalle(new DetallePedido("P005", "Tallarín Taypa", 1, 28.00));
             oLista.insertar(p3);
 
-            // Pedido 4: pedido rapido individual
             Pedido p4 = new Pedido("PED-004", "Mesa Ejecutiva", 1);
             p4.agregarDetalle(new DetallePedido("P010", "Pollo TiPaKay", 1, 25.00));
             oLista.insertar(p4);

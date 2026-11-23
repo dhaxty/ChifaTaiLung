@@ -2,7 +2,6 @@ package chifatailung.estructuras.arboles;
 
 import chifatailung.modelo.Plato;
 
-// arbol binario de busqueda para platos ordenados alfabeticamente por nombre (adaptado de cABB del profesor)
 public class cABBPlatos {
     private cNodoABB raiz, nuevo, p;
 
@@ -26,11 +25,10 @@ public class cABBPlatos {
         return vacio;
     }
 
-    // inserta un plato verificando que no exista duplicado por nombre ignorando mayusculas y minusculas
     public boolean ingresarValor(Plato valor){
         boolean ingresado = false;
         if(valor != null && valor.getNombre() != null && !valor.getNombre().trim().isEmpty()){
-            // rechazo silencioso de duplicados segun seccion 5
+            // rechaza nombres duplicados
             if(buscarIndexada(valor.getNombre()) == null){
                 nuevo = new cNodoABB(valor);
                 if(raiz == null){
@@ -45,25 +43,25 @@ public class cABBPlatos {
         return ingresado;
     }
 
-    // insercion recursiva segun estilo del profesor con compareToIgnoreCase
     public void insertaNodo(cNodoABB p, cNodoABB nuevo){
         if (p == null)
             p = nuevo;
         else{
             if(nuevo.getValor().getNombre().compareToIgnoreCase(p.getValor().getNombre()) > 0){
+                // caso recursivo a la derecha si es mayor
                 if(p.getDer() == null)
                     p.setDer(nuevo);
                 else insertaNodo(p.getDer(), nuevo);
             }
             else{
+                // caso recursivo a la izquierda si es menor
                 if(p.getIzq() == null)
                     p.setIzq(nuevo);
                 else insertaNodo(p.getIzq(), nuevo);
             }
         }
-    }  // fin inserta nodo
+    }
 
-    // busqueda secuencial recursiva que recorre todos los nodos sin aprovechar el orden del arbol
     public Plato buscarSecuencial(String nombre){
         Plato encontrado = null;
         if(nombre != null && raiz != null){
@@ -88,7 +86,6 @@ public class cABBPlatos {
         return encontrado;
     }
 
-    // busqueda indexada (binaria) recursiva que desciende por izquierda (<0) o derecha (>0)
     public Plato buscarIndexada(String nombre){
         Plato encontrado = null;
         if(nombre != null && raiz != null){
@@ -102,17 +99,19 @@ public class cABBPlatos {
         if(p != null){
             int cmp = nombre.compareToIgnoreCase(p.getValor().getNombre());
             if(cmp == 0){
+                // caso base coincidencia exacta
                 encontrado = p.getValor();
             } else if(cmp < 0){
+                // caso recursivo subarbol izquierdo
                 encontrado = buscarIndexadaRecursivo(p.getIzq(), nombre);
             } else {
+                // caso recursivo subarbol derecho
                 encontrado = buscarIndexadaRecursivo(p.getDer(), nombre);
             }
         }
         return encontrado;
     }
 
-    // cuenta de nodos de forma recursiva
     public int contar(){
         int total = contarNodos(raiz);
         return total;
@@ -126,7 +125,6 @@ public class cABBPlatos {
         return total;
     }
 
-    // devuelve arreglo nativo con los platos ordenados alfabeticamente para alimentar JTable
     public Plato[] enOrden(){
         int total = contar();
         Plato arreglo[] = new Plato[total];
@@ -144,7 +142,6 @@ public class cABBPlatos {
         return nuevoIndice;
     }
 
-    // recorridos en String exactamente al estilo del Apendice A.4
     public String recorreArbol(int opcion){
         p = raiz; String cadena="";
         switch(opcion){

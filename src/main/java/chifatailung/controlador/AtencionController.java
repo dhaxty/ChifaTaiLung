@@ -5,7 +5,6 @@ import chifatailung.modelo.ClienteAtencion;
 import chifatailung.modelo.Prioridad;
 import chifatailung.modelo.Rol;
 
-// controlador del modulo de atencion al cliente con cola por prioridad y gestion de turnos
 public class AtencionController {
     private Rol rolActual;
     private cColaPrioridad oCola;
@@ -36,7 +35,7 @@ public class AtencionController {
         return ultimoAtendido;
     }
 
-    // segun matriz de permisos de la seccion 4, tanto ADMIN como EMPLEADO gestionan la atencion
+    // admin y empleado pueden gestionar la atencion
     public boolean tienePermiso(){
         boolean tiene = false;
         if(rolActual != null && (rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO)){
@@ -45,7 +44,6 @@ public class AtencionController {
         return tiene;
     }
 
-    // encola un cliente asignando automaticamente turno y orden de llegada secuencial
     public String encolar(String nombreCliente, Prioridad prioridad){
         String mensaje = "";
         if(!tienePermiso()){
@@ -63,7 +61,6 @@ public class AtencionController {
         return mensaje;
     }
 
-    // sobrecarga para registrar cliente existente respetando o normalizando su turno u orden
     public String encolar(ClienteAtencion cliente){
         String mensaje = "";
         if(!tienePermiso()){
@@ -92,12 +89,10 @@ public class AtencionController {
         return mensaje;
     }
 
-    // sinonimo para registrar cliente en la cola
     public String registrar(String nombreCliente, Prioridad prioridad){
         return encolar(nombreCliente, prioridad);
     }
 
-    // atiende y desencola al cliente prioritario al frente de la cola
     public String atender(){
         String mensaje = "";
         if(!tienePermiso()){
@@ -113,22 +108,18 @@ public class AtencionController {
         return mensaje;
     }
 
-    // sinonimo descriptivo para desencolar
     public String desencolar(){
         return atender();
     }
 
-    // consulta el cliente prioritario al frente sin desencolarlo
     public ClienteAtencion acceso(){
         return oCola.acceso();
     }
 
-    // sinonimo para consultar el proximo cliente a ser atendido
     public ClienteAtencion verSiguiente(){
         return oCola.acceso();
     }
 
-    // devuelve arreglo con los clientes en espera para renderizar en JTable
     public ClienteAtencion[] listar(){
         return oCola.listar();
     }
@@ -145,7 +136,6 @@ public class AtencionController {
         return vacia;
     }
 
-    // restablece la cola a vacia
     public String vaciarCola(){
         String mensaje = "";
         if(!tienePermiso()){
@@ -157,7 +147,6 @@ public class AtencionController {
         return mensaje;
     }
 
-    // carga clientes de prueba con llegadas intercaladas para demostrar la prioridad y FIFO
     public String cargarDatosPrueba(){
         String mensaje = "";
         if(!tienePermiso()){
@@ -167,7 +156,6 @@ public class AtencionController {
             siguienteTurno = 1;
             siguienteOrdenLlegada = 1L;
 
-            // llegada intercalada de clientes representativos en un chifa
             encolar("Juan Carlos Mendoza", Prioridad.REGULAR);
             encolar("Rosa Elvira Huamán (Adulto mayor)", Prioridad.PREFERENCIAL);
             encolar("Carlos Alberto Wong", Prioridad.REGULAR);

@@ -2,7 +2,6 @@ package chifatailung.estructuras.colas;
 
 import chifatailung.modelo.ClienteAtencion;
 
-// nodo enlazado simple para la cola con prioridad segun estilo cNodo del profesor
 public class cNodoCola {
     private ClienteAtencion valor;
     private cNodoCola sig;

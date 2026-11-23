@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package chifatailung.vista;
 
 import chifatailung.controlador.PlatoController;
@@ -24,9 +20,6 @@ public class FrmPlatos extends javax.swing.JFrame {
     private DefaultTableModel modeloTabla;
     private String codigoSeleccionado;
 
-    /**
-     * Creates new form FrmPrincipal
-     */
     public FrmPlatos() {
         this(new Usuario("admin", "", Rol.ADMIN));
     }
@@ -43,11 +36,9 @@ public class FrmPlatos extends javax.swing.JFrame {
 
         initComponents();
         
-        // estilos visuales e iconos
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/logo140px.png")).getImage());
         getRootPane().putClientProperty("FlatLaf.fullWindowContent", true);
 
-        // botones del menu lateral con esquinas redondeadas
         JButton[] botonesMenu = {
             btnCarta, btnPedidos, btnAtencion, btnComprobantes, btnBuscar, btnMesas
         };
@@ -56,11 +47,9 @@ public class FrmPlatos extends javax.swing.JFrame {
             btn.setMargin(new Insets(0, 14, 0, 14));
         }
 
-        // resaltar el modulo activo en el menu lateral
         btnCarta.setBackground(new Color(182, 34, 38));
         btnCarta.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 1; borderColor: #F3D27A; focusWidth: 0");
         
-        // iconos SVG para los botones laterales
         btnCarta.setIcon(iconoMenu("carta.svg"));
         btnPedidos.setIcon(iconoMenu("pedidos.svg"));
         btnAtencion.setIcon(iconoMenu("clientes.svg"));
@@ -68,41 +57,33 @@ public class FrmPlatos extends javax.swing.JFrame {
         btnBuscar.setIcon(iconoMenu("buscar.svg"));
         btnMesas.setIcon(iconoMenu("mesas.svg"));
         
-        // redondeo del banner superior
         pnlBanner.putClientProperty("FlatLaf.style", "arc: 22");
 
-        // estilo pastilla para el badge del rol
         lblRolBadge.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblRolBadge.putClientProperty("FlatLaf.style", "arc: 999");
         
-        // estilo pastilla para el badge de total de platos
         lblTotalBadge.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblTotalBadge.putClientProperty("FlatLaf.style", "arc: 999");
 
-        // bordes redondeados en paneles contenedores
         pnlRegistro.putClientProperty("FlatLaf.style", "arc: 16; border: 1,1,1,1,#D8C3A0");
         pnlPlatos.putClientProperty("FlatLaf.style", "arc: 16; border: 1,1,1,1,#D8C3A0");
         pnlHeaderRegistro.putClientProperty("FlatLaf.style", "arc: 16 16 0 0");
         pnlHeaderCola.putClientProperty("FlatLaf.style", "arc: 16 16 0 0");
 
-        // bordes redondeados en controles de entrada
         txtNombre.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0");
         cmbCategoria.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0");
         txtPrecio.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0");
         cmbEstado.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0");
 
-        // bordes redondeados en botones de accion
         JButton[] botonesAccion = { btnIncluir, btnLimpiar, btnEditar, btnEliminar, btnCargarPrueba };
         for (JButton btn : botonesAccion) {
             btn.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 1; borderColor: #D8C3A0");
         }
 
-        // cabecera y filas alternadas en la tabla de platos
         tblPlatos.getTableHeader().setBackground(new Color(234, 217, 188));
         tblPlatos.getTableHeader().putClientProperty("FlatLaf.style", "background: #EAD9BC");
         tblPlatos.putClientProperty("FlatLaf.style", "background: #FFFDF8; alternateRowColor: #FAF0DE");
         
-        // boton de cerrar sesion redondeado
         btnCerrarSesion.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
         btnVolver.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
 
@@ -113,30 +94,18 @@ public class FrmPlatos extends javax.swing.JFrame {
             btnEliminar.setEnabled(false);
         }
 
-        // datos de sesion activa
         actualizarSesionUI();
-
-        // configuracion de tabla no editable
         configurarTabla();
-
-        // conexion de eventos de botones
         conectarEventos();
-
-        // sincronizacion de datos con la vista
         refrescarVista();
     }
 
-    // icono blanco para los botones del menu lateral
     private FlatSVGIcon iconoMenu(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 20, 20);
         icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> Color.WHITE));
         return icono;
     }
 
-
-    /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this method is always regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -620,7 +589,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    // actualiza las etiquetas del usuario y rol activo en la cabecera
     private void actualizarSesionUI() {
         if (oUsuario != null) {
             lblUsuarioActivo.setText(oUsuario.getUsuario());
@@ -632,7 +600,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         }
     }
 
-    // configura el modelo de datos de la tabla de platos haciendola no editable
     private void configurarTabla() {
         modeloTabla = new DefaultTableModel(
             new Object[][] {},
@@ -646,7 +613,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         };
         tblPlatos.setModel(modeloTabla);
 
-        // listener para sincronizar los campos superiores al seleccionar una fila
         tblPlatos.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 cargarPlatoSeleccionado();
@@ -661,7 +627,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         });
     }
 
-    // enlaza los eventos de accion a los botones del formulario y menu lateral
     private void conectarEventos() {
         btnIncluir.addActionListener(e -> registrarPlato());
         btnEditar.addActionListener(e -> editarPlato());
@@ -673,7 +638,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         btnCerrarSesion.addActionListener(e -> cerrarSesion());
 
         btnCarta.addActionListener(e -> {
-            // Modulo activo actualmente
         });
         btnAtencion.addActionListener(e -> abrirAtencion());
         btnComprobantes.addActionListener(e -> abrirComprobantes());
@@ -691,7 +655,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         });
     }
 
-    // carga los datos del plato seleccionado en los controles de entrada
     private void cargarPlatoSeleccionado() {
         int fila = tblPlatos.getSelectedRow();
         if (fila >= 0 && fila < tblPlatos.getRowCount()) {
@@ -709,7 +672,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         }
     }
 
-    // selecciona la categoria correspondiente en el combo o la agrega si no existe
     private void seleccionarCategoria(String categoria) {
         if (categoria != null && !categoria.trim().isEmpty()) {
             boolean encontrada = false;
@@ -727,7 +689,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         }
     }
 
-    // valida los campos y registra un nuevo plato en la carta con codigo automatico
     private void registrarPlato() {
         String nombre = txtNombre.getText().trim();
         String categoria = (cmbCategoria.getSelectedItem() != null) ? cmbCategoria.getSelectedItem().toString().trim() : "";
@@ -780,7 +741,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         }
     }
 
-    // actualiza los datos del plato seleccionado en la tabla
     private void editarPlato() {
         if (codigoSeleccionado == null || codigoSeleccionado.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this,
@@ -840,7 +800,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         }
     }
 
-    // elimina el plato seleccionado previa confirmacion del usuario
     private void eliminarPlato() {
         if (codigoSeleccionado == null || codigoSeleccionado.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this,
@@ -868,7 +827,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         }
     }
 
-    // limpia los controles de entrada y deselecciona la fila en la tabla
     private void limpiarCampos() {
         codigoSeleccionado = null;
         txtNombre.setText("");
@@ -882,7 +840,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         tblPlatos.clearSelection();
     }
 
-    // carga los platos de prueba en la carta y refresca la tabla
     private void cargarDatosPrueba() {
         String err = controlador.cargarDatosPrueba();
         if (!err.isEmpty()) {
@@ -896,7 +853,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         }
     }
 
-    // sincroniza la tabla y el contador con el estado actual de la carta
     private void refrescarVista() {
         if (modeloTabla == null) {
             modeloTabla = (DefaultTableModel) tblPlatos.getModel();
@@ -922,7 +878,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         lblTotalBadge.setText("Total: " + controlador.getCantidad() + " platos");
     }
 
-    // regresa a la ventana principal conservando la sesion activa
     private void volverAlMenu() {
         if (oUsuario != null) {
             new FrmPrincipal(oUsuario).setVisible(true);
@@ -932,13 +887,11 @@ public class FrmPlatos extends javax.swing.JFrame {
         dispose();
     }
 
-    // cierra la sesion actual y regresa a la ventana de login
     private void cerrarSesion() {
         new FrmLogin().setVisible(true);
         dispose();
     }
 
-    // abre el modulo de atencion conservando el usuario en sesion
     private void abrirAtencion() {
         if (oUsuario != null) {
             new FrmAtencion(oUsuario).setVisible(true);
@@ -948,7 +901,6 @@ public class FrmPlatos extends javax.swing.JFrame {
         dispose();
     }
 
-    // abre el modulo de comprobantes transfiriendo el usuario en sesion
     private void abrirComprobantes() {
         if (oUsuario != null) {
             new FrmComprobantes(oUsuario).setVisible(true);
@@ -958,13 +910,9 @@ public class FrmPlatos extends javax.swing.JFrame {
         dispose();
     }
 
-    // aviso informativo para modulos laterales todavia no disponibles
     private void abrirModulo(String nombreModulo) {
     }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         TemaApp.inicializar();
         java.awt.EventQueue.invokeLater(() -> new FrmPlatos().setVisible(true));

@@ -4,7 +4,6 @@ import chifatailung.estructuras.arreglos.cArregloPlatos;
 import chifatailung.modelo.Plato;
 import chifatailung.modelo.Rol;
 
-// controlador para la carta de platos con control de permisos por rol
 public class PlatoController {
     private Rol rolActual;
     private cArregloPlatos oArreglo;
@@ -23,7 +22,7 @@ public class PlatoController {
         return rolActual;
     }
 
-    // solo el admin puede agregar, modificar o eliminar platos de la carta
+    // solo admin puede modificar la carta
     public boolean puedeModificar(){
         boolean puede = false;
         if(rolActual == Rol.ADMIN){
@@ -44,7 +43,6 @@ public class PlatoController {
         return oArreglo;
     }
 
-    // valida permisos y campos antes de registrar; retorna vacio si fue exitoso
     public String registrar(String nombre, String categoria, double precio, boolean disponible){
         String mensaje = "";
         if(!puedeModificar()){
@@ -66,7 +64,6 @@ public class PlatoController {
         return mensaje;
     }
 
-    // valida campos y modifica el plato por su codigo
     public String actualizar(String codigo, String nombre, String categoria, double precio, boolean disponible){
         String mensaje = "";
         if(!puedeModificar()){
@@ -88,7 +85,6 @@ public class PlatoController {
         return mensaje;
     }
 
-    // elimina el plato por codigo con corrimiento manual
     public String eliminar(String codigo){
         String mensaje = "";
         if(!puedeModificar()){
@@ -104,7 +100,6 @@ public class PlatoController {
         return mensaje;
     }
 
-    // busqueda por codigo permitida para admin y empleado
     public Plato buscar(String codigo){
         Plato encontrado = null;
         if(codigo != null && !codigo.trim().isEmpty()){
@@ -113,12 +108,10 @@ public class PlatoController {
         return encontrado;
     }
 
-    // lista los platos registrados para cargarlos en la tabla
     public Plato[] listar(){
         return oArreglo.listar();
     }
 
-    // carga platos tradicionales para probar la carta sin depender de otros modulos
     public String cargarDatosPrueba(){
         String platosDemo[][] = {
             {"Arroz Chaufa de Pollo", "Chaufas", "18.00"},

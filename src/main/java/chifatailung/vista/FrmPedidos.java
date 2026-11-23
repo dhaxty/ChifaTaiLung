@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package chifatailung.vista;
 
 import chifatailung.controlador.PedidoController;
@@ -29,9 +25,6 @@ public class FrmPedidos extends javax.swing.JFrame {
     private DefaultTableModel modeloPedidos;
     private String idPedidoSeleccionado;
 
-    /**
-     * Creates new form FrmPedidos
-     */
     public FrmPedidos() {
         this(new Usuario("admin", "", Rol.ADMIN));
     }
@@ -53,14 +46,11 @@ public class FrmPedidos extends javax.swing.JFrame {
 
         initComponents();
 
-        // inicializacion de platos de la carta para el combo
         inicializarCartaPlatos();
 
-        // estilos visuales e iconos
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/logo140px.png")).getImage());
         getRootPane().putClientProperty("FlatLaf.fullWindowContent", true);
 
-        // botones del menu lateral con esquinas redondeadas
         JButton[] botonesMenu = {
             btnCarta, btnPedidos, btnAtencion, btnComprobantes, btnBuscar, btnMesas
         };
@@ -69,11 +59,9 @@ public class FrmPedidos extends javax.swing.JFrame {
             btn.setMargin(new Insets(0, 14, 0, 14));
         }
 
-        // resaltar el modulo activo en el menu lateral
         btnPedidos.setBackground(new Color(182, 34, 38));
         btnPedidos.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 1; borderColor: #F3D27A; focusWidth: 0");
 
-        // iconos SVG para los botones laterales
         btnCarta.setIcon(iconoMenu("carta.svg"));
         btnPedidos.setIcon(iconoMenu("pedidos.svg"));
         btnAtencion.setIcon(iconoMenu("clientes.svg"));
@@ -81,14 +69,11 @@ public class FrmPedidos extends javax.swing.JFrame {
         btnBuscar.setIcon(iconoMenu("buscar.svg"));
         btnMesas.setIcon(iconoMenu("mesas.svg"));
 
-        // redondeo del banner superior
         pnlBanner.putClientProperty("FlatLaf.style", "arc: 22");
 
-        // estilo pastilla para el badge del rol
         lblRolBadge.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblRolBadge.putClientProperty("FlatLaf.style", "arc: 999");
 
-        // bordes redondeados en paneles contenedores y tarjetas
         pnlDatosPedido.putClientProperty("FlatLaf.style", "arc: 16; border: 1,1,1,1,#D8C3A0");
         pnlDetallePedido.putClientProperty("FlatLaf.style", "arc: 16; border: 1,1,1,1,#D8C3A0");
         pnlPedidos.putClientProperty("FlatLaf.style", "arc: 16; border: 1,1,1,1,#D8C3A0");
@@ -97,7 +82,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         jPanel5.putClientProperty("FlatLaf.style", "arc: 16 16 0 0");
         jPanel6.putClientProperty("FlatLaf.style", "arc: 16 16 0 0");
 
-        // bordes redondeados en controles de entrada
         txtNumPedido.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0; focusWidth: 0");
         txtCliente.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0; focusWidth: 0");
         cmbMesa.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0; focusWidth: 0");
@@ -105,7 +89,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         spnCantidad.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0; focusWidth: 0");
         txtPrecioUnit.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0; focusWidth: 0");
 
-        // bordes redondeados en botones de accion y focusWidth: 0
         jButton1.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 0; focusWidth: 0");
         jButton2.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 1; borderColor: #D8C3A0; focusWidth: 0");
         jButton3.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 1; borderColor: #D8C3A0; focusWidth: 0");
@@ -115,51 +98,33 @@ public class FrmPedidos extends javax.swing.JFrame {
         btnEliminarPedido.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 0; focusWidth: 0");
         btnCargarPrueba.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 1; borderColor: #D8C3A0; focusWidth: 0");
 
-        // borde redondeado y fondo en scrolls de las tablas
         jScrollPane1.putClientProperty("FlatLaf.style", "arc: 12; border: 1,1,1,1,#D8C3A0");
         jScrollPane1.getViewport().setBackground(new Color(255, 253, 248));
         jScrollPane2.putClientProperty("FlatLaf.style", "arc: 12; border: 1,1,1,1,#D8C3A0");
         jScrollPane2.getViewport().setBackground(new Color(255, 253, 248));
 
-        // boton de cerrar sesion redondeado
         btnCerrarSesion.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
         btnVolver.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
 
-        // configuracion de cabeceras y estilos de tablas
         configurarEstilosTablas();
-
-        // datos de sesion activa
         actualizarSesionUI();
-
-        // configuracion de tablas no editables
         configurarTablas();
-
-        // cargar combos
         cargarComboMesas();
         cargarComboPlatos();
 
-        // configuracion del spinner de cantidad
         spnCantidad.setModel(new javax.swing.SpinnerNumberModel(1, 1, 50, 1));
 
-        // conexion de eventos de botones y tablas
         conectarEventos();
-
-        // inicializacion de campos y lista de pedidos
         limpiarFormulario();
         refrescarTablaPedidos();
     }
 
-    // icono blanco para los botones del menu lateral
     private FlatSVGIcon iconoMenu(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 20, 20);
         icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> Color.WHITE));
         return icono;
     }
 
-
-    /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this method is always regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -848,7 +813,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         registrarPedido();
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
-    // actualiza las etiquetas del usuario y rol activo en la cabecera
     private void actualizarSesionUI() {
         if (oUsuario != null) {
             lblUsuarioActivo.setText(oUsuario.getUsuario());
@@ -860,7 +824,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // aplica estilo rojo vino a las cabeceras y filas alternadas a las dos tablas
     private void configurarEstilosTablas() {
         jTable1.getTableHeader().setBackground(new Color(139, 18, 18));
         jTable1.getTableHeader().setForeground(new Color(255, 253, 248));
@@ -873,7 +836,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         tblPedidos.putClientProperty("FlatLaf.style", "background: #FFFDF8; alternateRowColor: #FAF0DE");
     }
 
-    // inicializa los modelos no editables de las dos tablas
     private void configurarTablas() {
         modeloDetalles = new DefaultTableModel(
             new Object[][] {},
@@ -900,7 +862,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         tblPedidos.setModel(modeloPedidos);
     }
 
-    // carga las mesas M01 a M16 en el selector desplegable
     private void cargarComboMesas() {
         cmbMesa.removeAllItems();
         for (int i = 1; i <= 16; i++) {
@@ -911,7 +872,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // inicializa la carta interna de platos representativos del chifa
     private void inicializarCartaPlatos() {
         oCarta.arregloVacio();
         oCarta.registrar("Arroz Chaufa de Pollo", "Chaufas", 18.00, true);
@@ -928,7 +888,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         oCarta.registrar("Chicha Morada 1L", "Bebidas", 10.00, true);
     }
 
-    // carga los platos de la carta en el combo desplegable
     private void cargarComboPlatos() {
         cmbPlato.removeAllItems();
         Plato[] lista = oCarta.listar();
@@ -944,7 +903,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // actualiza el precio unitario visible al cambiar la seleccion en el combo de platos
     private void actualizarPrecioPlatoSeleccionado() {
         String item = (String) cmbPlato.getSelectedItem();
         if (item != null && item.contains("·")) {
@@ -956,7 +914,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // enlaza los eventos de botones, tablas y menu lateral
     private void conectarEventos() {
         cmbPlato.addActionListener(e -> actualizarPrecioPlatoSeleccionado());
 
@@ -974,7 +931,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         btnVolver.addActionListener(e -> volverAlMenu());
         btnCerrarSesion.addActionListener(e -> cerrarSesion());
 
-        // sincronizacion de seleccion en tabla de pedidos
         tblPedidos.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 cargarPedidoSeleccionado();
@@ -987,7 +943,6 @@ public class FrmPedidos extends javax.swing.JFrame {
             }
         });
 
-        // sincronizacion de seleccion en tabla de detalles
         jTable1.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 cargarDetalleSeleccionado();
@@ -1000,13 +955,11 @@ public class FrmPedidos extends javax.swing.JFrame {
             }
         });
 
-        // navegacion del menu lateral
         btnCarta.addActionListener(e -> {
             new FrmPlatos(oUsuario).setVisible(true);
             dispose();
         });
         btnPedidos.addActionListener(e -> {
-            // Modulo activo actualmente
         });
         btnAtencion.addActionListener(e -> {
             new FrmAtencion(oUsuario).setVisible(true);
@@ -1036,7 +989,6 @@ public class FrmPedidos extends javax.swing.JFrame {
 
 
 
-    // carga el pedido seleccionado de la tabla al panel izquierdo de edicion
     private void cargarPedidoSeleccionado() {
         int fila = tblPedidos.getSelectedRow();
         if (fila >= 0 && fila < tblPedidos.getRowCount()) {
@@ -1072,7 +1024,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // carga el detalle seleccionado en los controles de edicion de items
     private void cargarDetalleSeleccionado() {
         int fila = jTable1.getSelectedRow();
         if (fila >= 0 && fila < jTable1.getRowCount()) {
@@ -1094,7 +1045,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // busca y selecciona el plato en el combo segun su codigo
     private void seleccionarPlatoEnCombo(String codigo) {
         if (codigo != null && !codigo.trim().isEmpty()) {
             String codBuscado = codigo.trim().toLowerCase(Locale.ROOT);
@@ -1108,7 +1058,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // selecciona la mesa correspondiente en el combo segun su numero entero
     private void seleccionarMesaEnCombo(int numero) {
         String codigo = String.format("M%02d", numero);
         for (int i = 0; i < cmbMesa.getItemCount(); i++) {
@@ -1120,7 +1069,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // agrega un nuevo detalle al pedido o acumula cantidad si el plato ya existe
     private void agregarDetalle() {
         String item = (String) cmbPlato.getSelectedItem();
         if (item == null || !item.contains("·")) {
@@ -1187,7 +1135,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // actualiza la fila de detalle seleccionada con los nuevos valores
     private void editarDetalle() {
         int fila = jTable1.getSelectedRow();
         if (fila < 0 || fila >= modeloDetalles.getRowCount()) {
@@ -1254,7 +1201,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // elimina la fila de detalle seleccionada de la tabla
     private void quitarDetalle() {
         int fila = jTable1.getSelectedRow();
         if (fila < 0 || fila >= modeloDetalles.getRowCount()) {
@@ -1269,7 +1215,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // recalcula el contador de detalles y el total acumulado del pedido en curso
     private void actualizarTotalesDetalles() {
         int totalItems = modeloDetalles.getRowCount();
         lblContadorDetalles.setText("Detalles: " + totalItems + " / 10");
@@ -1286,7 +1231,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         jLabel14.setText(String.format(Locale.US, "S/ %.2f", totalPedido));
     }
 
-    // valida e inserta un nuevo pedido completo en la lista enlazada
     private void registrarPedido() {
         String cliente = txtCliente.getText().trim();
         if (cliente.isEmpty()) {
@@ -1328,7 +1272,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // actualiza el pedido seleccionado en la tabla conservando su identificador
     private void actualizarPedido() {
         if (idPedidoSeleccionado == null || idPedidoSeleccionado.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this,
@@ -1372,7 +1315,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // limpia el formulario de entrada y restablece el proximo numero correlativo
     private void limpiarFormulario() {
         idPedidoSeleccionado = null;
         txtCliente.setText("");
@@ -1391,7 +1333,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         txtNumPedido.setText(calcularSiguienteNumeroPedido());
     }
 
-    // elimina de la lista enlazada el pedido seleccionado
     private void eliminarPedido() {
         if (idPedidoSeleccionado == null || idPedidoSeleccionado.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this,
@@ -1419,24 +1360,20 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // carga tres pedidos realistas de prueba con multiples detalles
     private void cargarDatosPrueba() {
         controlador.reiniciarPedidos();
 
-        // Pedido 1: Carlos Ramos en M02
         Pedido p1 = new Pedido("001", "Carlos Ramos", 2);
         p1.agregarDetalle(new DetallePedido("P002", "Arroz Chaufa Especial", 2, 24.00));
         p1.agregarDetalle(new DetallePedido("P008", "Wantán Frito (6 unid.)", 1, 12.00));
         p1.agregarDetalle(new DetallePedido("P012", "Chicha Morada 1L", 1, 10.00));
         controlador.registrar(p1);
 
-        // Pedido 2: María Torres en M07
         Pedido p2 = new Pedido("002", "María Torres", 7);
         p2.agregarDetalle(new DetallePedido("P009", "Pollo ChiJauKay", 1, 25.00));
         p2.agregarDetalle(new DetallePedido("P006", "Sopa Wantán Especial", 1, 16.00));
         controlador.registrar(p2);
 
-        // Pedido 3: Familia Quispe en M05
         Pedido p3 = new Pedido("003", "Familia Quispe", 5);
         p3.agregarDetalle(new DetallePedido("P003", "Aeropuerto de Pollo", 2, 22.00));
         p3.agregarDetalle(new DetallePedido("P005", "Tallarín Taypa", 1, 28.00));
@@ -1447,7 +1384,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         refrescarTablaPedidos();
     }
 
-    // refresca los datos visibles en la tabla principal de pedidos registrados
     private void refrescarTablaPedidos() {
         modeloPedidos.setRowCount(0);
         Pedido[] pedidos = controlador.listar();
@@ -1470,7 +1406,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         txtNumPedido.setText(calcularSiguienteNumeroPedido());
     }
 
-    // calcula el siguiente correlativo numerico con formato de tres digitos
     private String calcularSiguienteNumeroPedido() {
         int maxNumero = 0;
         if (controlador != null) {
@@ -1497,7 +1432,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         return resultado;
     }
 
-    // obtiene el numero entero de la mesa seleccionada en el combo
     private int obtenerNumeroMesaSeleccionada() {
         int numero = 1;
         String item = (String) cmbMesa.getSelectedItem();
@@ -1513,7 +1447,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         return numero;
     }
 
-    // selecciona y posiciona la vista en la fila del pedido indicado
     private void seleccionarFilaPedido(String numero) {
         if (numero != null && tblPedidos != null) {
             for (int i = 0; i < tblPedidos.getRowCount(); i++) {
@@ -1527,7 +1460,6 @@ public class FrmPedidos extends javax.swing.JFrame {
         }
     }
 
-    // regresa a la ventana principal conservando la sesion activa
     private void volverAlMenu() {
         if (oUsuario != null) {
             new FrmPrincipal(oUsuario).setVisible(true);
@@ -1537,15 +1469,11 @@ public class FrmPedidos extends javax.swing.JFrame {
         dispose();
     }
 
-    // cierra la sesion actual y regresa a la ventana de login
     private void cerrarSesion() {
         new FrmLogin().setVisible(true);
         dispose();
     }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         TemaApp.inicializar();
         java.awt.EventQueue.invokeLater(() -> new FrmPedidos().setVisible(true));

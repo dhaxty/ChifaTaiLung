@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package chifatailung.vista;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
@@ -14,18 +10,12 @@ public class FrmPrincipal extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmPrincipal.class.getName());
     private chifatailung.modelo.Usuario oUsuario;
 
-    /**
-     * Creates new form FrmPrincipal
-     */
     public FrmPrincipal() {
         initComponents();
         
-        
-        // estilos visuales e iconos
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/logo140px.png")).getImage());
         getRootPane().putClientProperty("FlatLaf.fullWindowContent", true);
 
-        // botones del menu lateral con esquinas redondeadas
         JButton[] botonesMenu = {
             btnCarta, btnPedidos, btnAtencion, btnComprobantes, btnBuscar, btnMesas
         };
@@ -34,7 +24,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
             btn.setMargin(new Insets(0, 14, 0, 14));
         }
 
-        // iconos SVG para los botones laterales
         btnCarta.setIcon(iconoMenu("carta.svg"));
         btnPedidos.setIcon(iconoMenu("pedidos.svg"));
         btnAtencion.setIcon(iconoMenu("clientes.svg"));
@@ -42,17 +31,13 @@ public class FrmPrincipal extends javax.swing.JFrame {
         btnBuscar.setIcon(iconoMenu("buscar.svg"));
         btnMesas.setIcon(iconoMenu("mesas.svg"));
         
-        // redondeo del banner superior
         pnlBanner.putClientProperty("FlatLaf.style", "arc: 22");
 
-        // estilo pastilla para el badge del rol
         lblRolBadge.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblRolBadge.putClientProperty("FlatLaf.style", "arc: 999");
         
-        // boton de cerrar sesion redondeado
         btnCerrarSesion.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
         
-        // tarjetas interactivas del menu con cursor de mano
         javax.swing.JPanel[] tarjetas = {
             cardCarta, cardPedidos, cardAtencion, cardComprobantes, cardBuscar, cardMesas
         };
@@ -60,7 +45,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
             card.putClientProperty("FlatLaf.style", "arc: 20; border: 1,1,1,1,#E6DFD3");
             card.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         }
-        // marco para los iconos de las tarjetas
         javax.swing.JLabel[] iconosTarjeta = {
             lblIconoCarta, lblIconoPedidos, lblIconoAtencion,
             lblIconoComprobantes, lblIconoBuscar, lblIconoMesas
@@ -69,7 +53,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
             lbl.putClientProperty("FlatLaf.style", "arc: 14; border: 1,1,1,1,#E6DFD3");
         }
 
-        // iconos SVG tintados en color vino para las tarjetas
         lblIconoCarta.setIcon(iconoTarjeta("carta.svg"));
         lblIconoPedidos.setIcon(iconoTarjeta("pedidos.svg"));
         lblIconoAtencion.setIcon(iconoTarjeta("clientes.svg"));
@@ -82,7 +65,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
             dispose();
         });
 
-        // navegacion de los botones laterales hacia los modulos del sistema
         btnCarta.addActionListener(e -> {
             new FrmPlatos(oUsuario).setVisible(true);
             dispose();
@@ -108,7 +90,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
             dispose();
         });
 
-        // navegacion de las tarjetas centrales interactivas
         conectarTarjeta(cardCarta, () -> {
             new FrmPlatos(oUsuario).setVisible(true);
             dispose();
@@ -146,7 +127,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
     
     }
 
-    // conecta el evento de clic del raton y el cursor a la tarjeta y sus componentes
     private void conectarTarjeta(javax.swing.JPanel card, Runnable accion) {
         java.awt.Cursor cursorMano = java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR);
         card.setCursor(cursorMano);
@@ -162,22 +142,17 @@ public class FrmPrincipal extends javax.swing.JFrame {
             comp.addMouseListener(adapter);
         }
     }
-    // icono blanco para los botones del menu lateral
     private FlatSVGIcon iconoMenu(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 20, 20);
         icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> Color.WHITE));
         return icono;
     }
 
-    // icono vino para las tarjetas interactivas
     private FlatSVGIcon iconoTarjeta(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 22, 22);
         icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> new Color(140, 19, 22)));
         return icono;
     }
-    /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this method is always regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -742,9 +717,6 @@ public class FrmPrincipal extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         TemaApp.inicializar();
         java.awt.EventQueue.invokeLater(() -> new FrmPrincipal().setVisible(true));

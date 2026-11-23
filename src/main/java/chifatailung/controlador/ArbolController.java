@@ -4,7 +4,6 @@ import chifatailung.estructuras.arboles.cABBPlatos;
 import chifatailung.modelo.Plato;
 import chifatailung.modelo.Rol;
 
-// controlador del modulo de busqueda en arbol binario con permisos por rol
 public class ArbolController {
     private Rol rolActual;
     private cABBPlatos oABB;
@@ -26,7 +25,7 @@ public class ArbolController {
         return oABB;
     }
 
-    // segun matriz de permisos de la seccion 4, solo ADMIN puede registrar platos en el arbol
+    // solo admin puede registrar platos en el arbol
     public boolean puedeModificar(){
         boolean puede = false;
         if(rolActual == Rol.ADMIN){
@@ -55,7 +54,6 @@ public class ArbolController {
         return vacio;
     }
 
-    // valida permisos y campos antes de ingresar un plato al arbol binario
     public String insertar(String codigo, String nombre, String categoria, double precio, boolean disponible){
         String mensaje = "";
         if(!puedeModificar()){
@@ -69,7 +67,6 @@ public class ArbolController {
         } else if(precio < 0){
             mensaje = "El precio no puede ser negativo.";
         } else if(oABB.buscarIndexada(nombre.trim()) != null){
-            // verificacion previa para mensaje explicativo al usuario
             mensaje = "Ya existe un plato registrado con el nombre: " + nombre.trim();
         } else {
             Plato plato = new Plato(codigo.trim(), nombre.trim(), categoria.trim(), precio, disponible);
@@ -81,7 +78,6 @@ public class ArbolController {
         return mensaje;
     }
 
-    // sobrecarga para insertar directamente un objeto Plato
     public String insertar(Plato plato){
         String mensaje = "";
         if(plato == null){
@@ -92,7 +88,6 @@ public class ArbolController {
         return mensaje;
     }
 
-    // busqueda secuencial permitida para administrador y empleado
     public Plato buscarSecuencial(String nombre){
         Plato encontrado = null;
         if(nombre != null && !nombre.trim().isEmpty()){
@@ -101,7 +96,6 @@ public class ArbolController {
         return encontrado;
     }
 
-    // busqueda indexada permitida para administrador y empleado
     public Plato buscarIndexada(String nombre){
         Plato encontrado = null;
         if(nombre != null && !nombre.trim().isEmpty()){
@@ -110,22 +104,19 @@ public class ArbolController {
         return encontrado;
     }
 
-    // devuelve arreglo de platos en orden alfabetico para JTable
     public Plato[] enOrden(){
         return oABB.enOrden();
     }
 
-    // sinonimo para compatibilidad con vistas y otros controladores
     public Plato[] listar(){
         return oABB.enOrden();
     }
 
-    // recorridos en cadena (1: pre-orden, 2: in-orden, 3: post-orden)
     public String recorreArbol(int opcion){
         return oABB.recorreArbol(opcion);
     }
 
-    // vaciado del arbol restringido a rol administrador
+    // vaciado restringido a rol admin
     public String vaciarArbol(){
         String mensaje = "";
         if(!puedeModificar()){
@@ -136,11 +127,9 @@ public class ArbolController {
         return mensaje;
     }
 
-    // carga platos de prueba representativos para probar busquedas y recorridos
     public String cargarDatosPrueba(){
         oABB.arbolVacio();
 
-        // platos seleccionados para un arbol balanceado con variedad de letras iniciales
         Plato demo[] = {
             new Plato("P001", "Kam Lu Wantán", "Especialidades", 28.00, true),
             new Plato("P002", "Chicha Morada 1L", "Bebidas", 10.00, true),

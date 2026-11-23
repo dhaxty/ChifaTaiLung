@@ -1,6 +1,5 @@
 package chifatailung.modelo;
 
-// pedido de consumo con relacion de composicion hacia un arreglo fijo de hasta 10 detalles
 public class Pedido {
     private String numero, nombreCliente;
     private int numeroMesa;
@@ -20,7 +19,6 @@ public class Pedido {
         this.cantidadDetalles = 0;
     }
 
-    // agrega un detalle validando limites y datos; rechaza el detalle 11 devolviendo false
     public boolean agregarDetalle(DetallePedido detalle){
         boolean agregado = false;
         if(detalle != null && detalle.getCantidad() >= 1 && detalle.getPrecioUnitario() >= 0 && cantidadDetalles < 10){
@@ -31,7 +29,6 @@ public class Pedido {
         return agregado;
     }
 
-    // edita un detalle en la posicion indicada sin alterar la cantidad de detalles
     public boolean editarDetalle(int indice, DetallePedido detalle){
         boolean editado = false;
         if(indice >= 0 && indice < cantidadDetalles && detalle != null && detalle.getCantidad() >= 1 && detalle.getPrecioUnitario() >= 0){
@@ -41,10 +38,10 @@ public class Pedido {
         return editado;
     }
 
-    // elimina un detalle realizando corrimiento manual hacia la izquierda
     public boolean quitarDetalle(int indice){
         boolean quitado = false;
         if(indice >= 0 && indice < cantidadDetalles){
+            // desplaza los elementos a la izquierda tras eliminar
             for(int i = indice; i < cantidadDetalles - 1; i++){
                 detalles[i] = detalles[i + 1];
             }
@@ -55,7 +52,6 @@ public class Pedido {
         return quitado;
     }
 
-    // calcula el total recorriendo estrictamente de 0 a cantidadDetalles - 1
     public double calcularTotal(){
         double total = 0.0;
         for(int i = 0; i < cantidadDetalles; i++){
@@ -66,7 +62,6 @@ public class Pedido {
         return total;
     }
 
-    // devuelve un arreglo exacto con los detalles registrados para facilitar visualizacion
     public DetallePedido[] listarDetalles(){
         DetallePedido resultado[] = new DetallePedido[cantidadDetalles];
         for(int i = 0; i < cantidadDetalles; i++){
@@ -75,7 +70,6 @@ public class Pedido {
         return resultado;
     }
 
-    // obtiene un detalle por indice de posicion
     public DetallePedido obtenerDetalle(int indice){
         DetallePedido detalle = null;
         if(indice >= 0 && indice < cantidadDetalles){

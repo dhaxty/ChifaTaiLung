@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package chifatailung.vista;
 
 import chifatailung.controlador.ArbolController;
@@ -27,9 +23,6 @@ public class FrmArbol extends javax.swing.JFrame {
     private DefaultTableModel modeloTabla;
     private int recorridoActivo;
 
-    /**
-     * Creates new form FrmPrincipal
-     */
     public FrmArbol() {
         this(new Usuario("admin", "", Rol.ADMIN));
     }
@@ -50,11 +43,9 @@ public class FrmArbol extends javax.swing.JFrame {
 
         initComponents();
 
-        // estilos visuales e iconos
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/logo140px.png")).getImage());
         getRootPane().putClientProperty("FlatLaf.fullWindowContent", true);
 
-        // botones del menu lateral con esquinas redondeadas
         JButton[] botonesMenu = {
             btnCarta, btnPedidos, btnAtencion, btnComprobantes, btnBuscar, btnMesas
         };
@@ -63,11 +54,9 @@ public class FrmArbol extends javax.swing.JFrame {
             btn.setMargin(new Insets(0, 14, 0, 14));
         }
 
-        // resaltar el modulo activo en el menu lateral
         btnBuscar.setBackground(new Color(182, 34, 38));
         btnBuscar.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 1; borderColor: #F3D27A; focusWidth: 0");
         
-        // iconos SVG para los botones laterales
         btnCarta.setIcon(iconoMenu("carta.svg"));
         btnPedidos.setIcon(iconoMenu("pedidos.svg"));
         btnAtencion.setIcon(iconoMenu("clientes.svg"));
@@ -75,75 +64,51 @@ public class FrmArbol extends javax.swing.JFrame {
         btnBuscar.setIcon(iconoMenu("buscar.svg"));
         btnMesas.setIcon(iconoMenu("mesas.svg"));
         
-        // redondeo del banner superior
         pnlBanner.putClientProperty("FlatLaf.style", "arc: 22");
 
-        // estilo pastilla para el badge del rol
         lblRolBadge.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblRolBadge.putClientProperty("FlatLaf.style", "arc: 999");
         
-        // estilo pastilla para el badge de total de platos
         lblTotalBadge.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblTotalBadge.putClientProperty("FlatLaf.style", "arc: 999");
 
-        // bordes redondeados en paneles contenedores
         pnlRegistro.putClientProperty("FlatLaf.style", "arc: 16; border: 1,1,1,1,#D8C3A0");
         pnlPlatos.putClientProperty("FlatLaf.style", "arc: 16; border: 1,1,1,1,#D8C3A0");
         pnlHeaderRegistro.putClientProperty("FlatLaf.style", "arc: 16 16 0 0");
         pnlHeaderCola.putClientProperty("FlatLaf.style", "arc: 16 16 0 0");
 
-        // bordes redondeados en controles de entrada
         txtNombre.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0");
         cmbTipo.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0");
 
-        // borde rojo vino completo para el panel de resultado de busqueda
         pnlResultado.putClientProperty("FlatLaf.style", "arc: 12; border: 1,1,1,1,#8B1212");
 
-        // bordes redondeados en botones de accion y focusWidth: 0
         btnIncluir.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 0; focusWidth: 0");
         btnLimpiar.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 1; borderColor: #D8C3A0; focusWidth: 0");
         btnCargarPrueba.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 1; borderColor: #D8C3A0; focusWidth: 0");
 
-        // borde redondeado y fondo en scroll de la tabla
         jScrollPane2.putClientProperty("FlatLaf.style", "arc: 12; border: 1,1,1,1,#D8C3A0");
         jScrollPane2.getViewport().setBackground(new Color(255, 253, 248));
 
-        // cabecera y filas alternadas en la tabla de arbol
         tblArbol.getTableHeader().setBackground(new Color(234, 217, 188));
         tblArbol.getTableHeader().putClientProperty("FlatLaf.style", "background: #EAD9BC");
         tblArbol.putClientProperty("FlatLaf.style", "background: #FFFDF8; alternateRowColor: #FAF0DE");
         
-        // boton de cerrar sesion redondeado
         btnCerrarSesion.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
         btnVolver.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
 
-        // datos de sesion activa
         actualizarSesionUI();
-
-        // configuracion de tabla no editable
         configurarTabla();
-
-        // conexion de eventos de botones
         conectarEventos();
-
-        // restablecer estado inicial de busqueda
         restablecerEstadoBusqueda();
-
-        // sincronizacion de datos con la vista y recorrido inicial
         refrescarTablaYRecorrido();
     }
 
-    // icono blanco para los botones del menu lateral
     private FlatSVGIcon iconoMenu(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 20, 20);
         icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> Color.WHITE));
         return icono;
     }
 
-
-    /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this method is always regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -645,7 +610,6 @@ public class FrmArbol extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    // actualiza las etiquetas del usuario y rol activo en la cabecera
     private void actualizarSesionUI() {
         if (oUsuario != null) {
             lblUsuarioActivo.setText(oUsuario.getUsuario());
@@ -657,7 +621,6 @@ public class FrmArbol extends javax.swing.JFrame {
         }
     }
 
-    // configura el modelo de datos de la tabla de arbol haciendola no editable
     private void configurarTabla() {
         modeloTabla = new DefaultTableModel(
             new Object[][] {},
@@ -672,7 +635,6 @@ public class FrmArbol extends javax.swing.JFrame {
         tblArbol.setModel(modeloTabla);
     }
 
-    // enlaza los eventos de accion a los botones del formulario y menu lateral
     private void conectarEventos() {
         btnIncluir.addActionListener(e -> buscarPlato());
         btnLimpiar.addActionListener(e -> limpiarBusqueda());
@@ -699,7 +661,6 @@ public class FrmArbol extends javax.swing.JFrame {
             dispose();
         });
         btnBuscar.addActionListener(e -> {
-            // Ya nos encontramos en el modulo de busqueda en arbol
         });
         btnPedidos.addActionListener(e -> {
             new FrmPedidos(oUsuario).setVisible(true);
@@ -711,7 +672,6 @@ public class FrmArbol extends javax.swing.JFrame {
         });
     }
 
-    // realiza la busqueda secuencial o indexada en el arbol segun el combo
     private void buscarPlato() {
         String nombre = txtNombre.getText().trim();
         if (nombre.isEmpty()) {
@@ -763,7 +723,6 @@ public class FrmArbol extends javax.swing.JFrame {
         }
     }
 
-    // selecciona y desplaza el scroll hacia la fila del plato encontrado en la tabla
     private void seleccionarFilaPlato(String codigo) {
         if (codigo != null && tblArbol != null) {
             int totalFilas = tblArbol.getRowCount();
@@ -778,7 +737,6 @@ public class FrmArbol extends javax.swing.JFrame {
         }
     }
 
-    // normaliza un texto eliminando tildes y diacriticos y pasandolo a minusculas
     private String normalizarTexto(String texto) {
         String resultado = "";
         if (texto != null) {
@@ -788,7 +746,7 @@ public class FrmArbol extends javax.swing.JFrame {
         return resultado;
     }
 
-    // busqueda indexada en el ABB navegando por izquierda o derecha con nombres normalizados
+    // busqueda indexada recursiva comparando nombres normalizados
     private Plato buscarIndexadaAux(cNodoABB p, String nombreNorm) {
         Plato encontrado = null;
         if (p != null && nombreNorm != null && !nombreNorm.isEmpty()) {
@@ -805,7 +763,7 @@ public class FrmArbol extends javax.swing.JFrame {
         return encontrado;
     }
 
-    // busqueda secuencial en el ABB recorriendo todos los nodos con nombres normalizados
+    // busqueda secuencial recursiva recorriendo ambos subarboles
     private Plato buscarSecuencialAux(cNodoABB p, String nombreNorm) {
         Plato encontrado = null;
         if (p != null && nombreNorm != null && !nombreNorm.isEmpty()) {
@@ -822,7 +780,6 @@ public class FrmArbol extends javax.swing.JFrame {
         return encontrado;
     }
 
-    // limpia el campo de texto, deselecciona la tabla y restablece los textos de busqueda
     private void limpiarBusqueda() {
         txtNombre.setText("");
         if (cmbTipo.getItemCount() > 0) {
@@ -832,7 +789,6 @@ public class FrmArbol extends javax.swing.JFrame {
         restablecerEstadoBusqueda();
     }
 
-    // restablece los textos informativos del panel de resultado
     private void restablecerEstadoBusqueda() {
         lblEstadoBusqueda.setText("RESULTADO DE BÚSQUEDA");
         lblEstadoBusqueda.setFont(new Font("Segoe UI", Font.BOLD, 12));
@@ -843,13 +799,11 @@ public class FrmArbol extends javax.swing.JFrame {
         lblDetallePlato.setForeground(new Color(59, 42, 32));
     }
 
-    // cambia el recorrido activo y actualiza la tabla
     private void cambiarRecorrido(int nuevoRecorrido) {
         this.recorridoActivo = nuevoRecorrido;
         refrescarTablaYRecorrido();
     }
 
-    // carga los platos de prueba en el arbol binario y actualiza la interfaz
     private void cargarDatosPrueba() {
         String err = controlador.cargarDatosPrueba();
         if (!err.isEmpty()) {
@@ -864,7 +818,6 @@ public class FrmArbol extends javax.swing.JFrame {
         }
     }
 
-    // sincroniza la tabla, badges y recorridos con el arbol binario actual
     private void refrescarTablaYRecorrido() {
         if (modeloTabla == null) {
             modeloTabla = (DefaultTableModel) tblArbol.getModel();
@@ -890,7 +843,6 @@ public class FrmArbol extends javax.swing.JFrame {
         actualizarEstiloBotonesRecorrido();
     }
 
-    // resalta en rojo vino el boton del recorrido activo y neutraliza estados de foco en los 3 botones
     private void actualizarEstiloBotonesRecorrido() {
         JButton[] botones = { btnEditar, btnEliminar, jButton1 };
         int[] tipos = { 1, 2, 3 };
@@ -912,7 +864,6 @@ public class FrmArbol extends javax.swing.JFrame {
         }
     }
 
-    // devuelve arreglo de platos ordenados segun la opcion de recorrido
     private Plato[] obtenerPlatosRecorrido(int opcion) {
         int total = 0;
         if (controlador != null) {
@@ -969,7 +920,6 @@ public class FrmArbol extends javax.swing.JFrame {
         return idx;
     }
 
-    // regresa a la ventana principal conservando la sesion activa
     private void volverAlMenu() {
         if (oUsuario != null) {
             new FrmPrincipal(oUsuario).setVisible(true);
@@ -979,19 +929,14 @@ public class FrmArbol extends javax.swing.JFrame {
         dispose();
     }
 
-    // cierra la sesion actual y regresa a la ventana de login
     private void cerrarSesion() {
         new FrmLogin().setVisible(true);
         dispose();
     }
 
-    // aviso informativo para modulos laterales todavia no disponibles
     private void abrirModulo(String nombreModulo) {
     }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         TemaApp.inicializar();
         java.awt.EventQueue.invokeLater(() -> new FrmArbol().setVisible(true));

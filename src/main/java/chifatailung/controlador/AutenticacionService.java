@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-// servicio local con las cuentas fijas de admin y empleado
 public class AutenticacionService {
     private Usuario usuarios[];
 
@@ -16,7 +15,7 @@ public class AutenticacionService {
         usuarios[1] = new Usuario("empleado", calcularHash("empleado123"), Rol.EMPLEADO);
     }
 
-    // genera el hash SHA-256 de la contrasena para no guardarla en texto plano
+    // genera hash sha-256 para la clave
     public static String calcularHash(String clave){
         String hash = "";
         if(clave != null){
@@ -35,7 +34,6 @@ public class AutenticacionService {
         return hash;
     }
 
-    // busca el usuario y compara el hash de la clave; devuelve null si falla
     public Usuario autenticar(String usuario, String clave){
         Usuario encontrado = null;
         if(usuario != null && clave != null){

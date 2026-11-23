@@ -2,7 +2,6 @@ package chifatailung.estructuras.arreglos;
 
 import chifatailung.modelo.Plato;
 
-// arreglo lineal para la carta de platos implementado a mano sin colecciones
 public class cArregloPlatos {
     private Plato platos[];
     private int cantidad;
@@ -21,7 +20,6 @@ public class cArregloPlatos {
         arregloVacio();
     }
 
-    // deja el tope en -1 y limpia las posiciones del arreglo
     public void arregloVacio(){
         cantidad = 0;
         for(int i = 0; i <= indMax; i++){
@@ -53,11 +51,10 @@ public class cArregloPlatos {
         return vacio;
     }
 
-    // genera codigo automatico P001, P002... y guarda al final si hay espacio
     public String registrar(String nombre, String categoria, double precio, boolean disponible){
         String codigo = null;
         if(cantidad < platos.length){
-            // el contador no baja al borrar para no reutilizar codigos en la sesion
+            // no reutiliza codigos en la sesion
             contadorCodigo++;
             codigo = String.format("P%03d", contadorCodigo);
             platos[cantidad] = new Plato(codigo, nombre, categoria, precio, disponible);
@@ -66,7 +63,6 @@ public class cArregloPlatos {
         return codigo;
     }
 
-    // sobrecarga para registrar cuando ya se tiene el objeto plato
     public String registrar(Plato nuevoPlato){
         String codigo = null;
         if(nuevoPlato != null && cantidad < platos.length){
@@ -81,7 +77,6 @@ public class cArregloPlatos {
         return codigo;
     }
 
-    // busca por codigo y actualiza sus datos; devuelve false si no existe
     public boolean actualizar(String codigo, String nombre, String categoria, double precio, boolean disponible){
         boolean actualizado = false;
         if(codigo != null){
@@ -100,7 +95,6 @@ public class cArregloPlatos {
         return actualizado;
     }
 
-    // actualiza los datos tomando los valores desde otro objeto plato
     public boolean actualizar(String codigo, Plato datos){
         boolean actualizado = false;
         if(codigo != null && datos != null){
@@ -109,7 +103,6 @@ public class cArregloPlatos {
         return actualizado;
     }
 
-    // busca el codigo y corre los platos a la izquierda para tapar el vacio
     public boolean eliminar(String codigo){
         boolean eliminado = false;
         if(codigo != null && cantidad > 0){
@@ -122,11 +115,10 @@ public class cArregloPlatos {
                 i++;
             }
             if(pos != -1){
-                // corre los platos una posicion a la izquierda
+                // desplaza los elementos a la izquierda tras eliminar
                 for(int j = pos; j < cantidad - 1; j++){
                     platos[j] = platos[j + 1];
                 }
-                // limpia la ultima referencia y decrementa el tope
                 platos[cantidad - 1] = null;
                 cantidad--;
                 eliminado = true;
@@ -135,7 +127,6 @@ public class cArregloPlatos {
         return eliminado;
     }
 
-    // busqueda secuencial por codigo del plato; devuelve null si no existe
     public Plato buscar(String codigo){
         Plato encontrado = null;
         if(codigo != null && cantidad > 0){
@@ -150,7 +141,6 @@ public class cArregloPlatos {
         return encontrado;
     }
 
-    // copia los platos activos a un nuevo arreglo para cargarlos en la tabla
     public Plato[] listar(){
         Plato resultado[] = new Plato[cantidad];
         for(int i = 0; i < cantidad; i++){
@@ -159,7 +149,6 @@ public class cArregloPlatos {
         return resultado;
     }
 
-    // arma una cadena con los platos separados por guiones para probar por consola
     public String muestraArreglo(){
         String cadena = "";
         for(int i = 0; i < cantidad; i++){

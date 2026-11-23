@@ -2,7 +2,6 @@ package chifatailung.estructuras.colas;
 
 import chifatailung.modelo.ClienteAtencion;
 
-// cola dinamica con prioridad y orden FIFO estable por nivel segun estilo del profesor
 public class cColaPrioridad {
     private cNodoCola first, last, p, nuevo;
     private int cantidad;
@@ -11,12 +10,11 @@ public class cColaPrioridad {
         colaVacia();
     }
 
-    // inicializa o reinicia la cola a estado vacio
     public void colaVacia(){
         first = null;
         last = null;
         cantidad = 0;
-    } // fin colaVacia
+    }
 
     public cNodoCola getFirst(){
         return first;
@@ -38,7 +36,6 @@ public class cColaPrioridad {
         return vacia;
     }
 
-    // incluye un cliente insertandolo segun prioridad (menor nivel antes) y FIFO estable por ordenLlegada
     public void incluir(ClienteAtencion valor){
         if(valor != null){
             nuevo = new cNodoCola(valor);
@@ -47,13 +44,13 @@ public class cColaPrioridad {
                 first = nuevo;
                 last = nuevo;
             } else {
-                // si el nuevo tiene mayor prioridad que el primero (menor numero de nivel)
+                // inserta al inicio si tiene mayor prioridad
                 if(nuevo.getValor().getPrioridad().getNivel() < first.getValor().getPrioridad().getNivel()){
                     nuevo.setSig(first);
                     first = nuevo;
                 } else {
                     p = first;
-                    // avanza mientras el siguiente tenga prioridad estrictamente mayor o igual (para respetar FIFO)
+                    // avanza respetando la prioridad y fifo por nivel
                     while(p.getSig() != null && p.getSig().getValor().getPrioridad().getNivel() <= nuevo.getValor().getPrioridad().getNivel()){
                         p = p.getSig();
                     }
@@ -66,13 +63,13 @@ public class cColaPrioridad {
             }
             cantidad++;
         }
-    } // fin incluir
+    }
 
-    // desencola y devuelve el cliente al frente; devuelve null si la cola esta vacia
     public ClienteAtencion eliminar(){
         ClienteAtencion valor = null;
         if(first != null){
             valor = first.getValor();
+            // desvincula el primer nodo y actualiza punteros
             first = first.getSig();
             if(first == null){
                 last = null;
@@ -80,18 +77,16 @@ public class cColaPrioridad {
             cantidad--;
         }
         return valor;
-    } // fin eliminar
+    }
 
-    // consulta el cliente al frente sin desencolar; retorna null si esta vacia
     public ClienteAtencion acceso(){
         ClienteAtencion valor = null;
         if(first != null){
             valor = first.getValor();
         }
         return valor;
-    } // fin acceso
+    }
 
-    // devuelve un arreglo exacto con los clientes en orden de atencion para alimentar JTable
     public ClienteAtencion[] listar(){
         ClienteAtencion resultado[];
         if(first == null || cantidad == 0){
@@ -107,9 +102,8 @@ public class cColaPrioridad {
             }
         }
         return resultado;
-    } // fin listar
+    }
 
-    // acumula en cadena los clientes con separador " - " para visualizacion en consola
     public String muestraCola(){
         p = first;
         String cadena = "";
@@ -123,5 +117,5 @@ public class cColaPrioridad {
             p = p.getSig();
         }
         return cadena;
-    } // fin muestraCola
+    }
 }

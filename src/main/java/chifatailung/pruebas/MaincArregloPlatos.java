@@ -6,10 +6,8 @@ import chifatailung.estructuras.arreglos.cArregloPlatos;
 import chifatailung.modelo.Plato;
 import chifatailung.modelo.Rol;
 
-// pruebas por consola para verificar la estructura y los controladores
 public class MaincArregloPlatos {
     public static void main(String[] args){
-        // prueba basica de registro y eliminacion con corrimiento
         System.out.println("=== PRUEBA DE cArregloPlatos ===");
         cArregloPlatos oArreglo = new cArregloPlatos(50);
         String c1 = oArreglo.registrar("Chaufa Pollo", "Chaufas", 18.0, true);
@@ -21,7 +19,6 @@ public class MaincArregloPlatos {
         oArreglo.eliminar(c2);
         System.out.println("Luego de eliminar: " + oArreglo.muestraArreglo());
 
-        // prueba permisos de admin y empleado en el controlador
         System.out.println("\n=== PRUEBA DE PlatoController (ADMIN vs EMPLEADO) ===");
         PlatoController cAdmin = new PlatoController(Rol.ADMIN);
         cAdmin.cargarDatosPrueba();
@@ -33,7 +30,6 @@ public class MaincArregloPlatos {
         String errEmp = cEmp.registrar("Plato Prohibido", "Especiales", 20.0, true);
         System.out.println("Registro Empleado resultado (espera denegado): '" + errEmp + "'");
 
-        // prueba inicio de sesion con credenciales correctas e invalidas
         System.out.println("\n=== PRUEBA DE AuthController ===");
         AuthController auth = new AuthController();
         String errLogin1 = auth.iniciarSesion("admin", "admin123");

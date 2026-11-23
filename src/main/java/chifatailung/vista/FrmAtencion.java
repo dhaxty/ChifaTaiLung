@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package chifatailung.vista;
 
 import chifatailung.controlador.AtencionController;
@@ -23,9 +19,6 @@ public class FrmAtencion extends javax.swing.JFrame {
     private AtencionController controlador;
     private DefaultTableModel modeloTabla;
 
-    /**
-     * Creates new form FrmPrincipal
-     */
     public FrmAtencion() {
         this(new Usuario("admin", "", Rol.ADMIN));
     }
@@ -41,11 +34,9 @@ public class FrmAtencion extends javax.swing.JFrame {
 
         initComponents();
         
-        // estilos visuales e iconos
         setIconImage(new javax.swing.ImageIcon(getClass().getResource("/logo140px.png")).getImage());
         getRootPane().putClientProperty("FlatLaf.fullWindowContent", true);
 
-        // botones del menu lateral con esquinas redondeadas
         JButton[] botonesMenu = {
             btnCarta, btnPedidos, btnAtencion, btnComprobantes, btnBuscar, btnMesas
         };
@@ -54,11 +45,9 @@ public class FrmAtencion extends javax.swing.JFrame {
             btn.setMargin(new Insets(0, 14, 0, 14));
         }
 
-        // resaltar el modulo activo en el menu lateral
         btnAtencion.setBackground(new Color(182, 34, 38));
         btnAtencion.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 1; borderColor: #F3D27A; focusWidth: 0");
         
-        // iconos SVG para los botones laterales
         btnCarta.setIcon(iconoMenu("carta.svg"));
         btnPedidos.setIcon(iconoMenu("pedidos.svg"));
         btnAtencion.setIcon(iconoMenu("clientes.svg"));
@@ -66,72 +55,50 @@ public class FrmAtencion extends javax.swing.JFrame {
         btnBuscar.setIcon(iconoMenu("buscar.svg"));
         btnMesas.setIcon(iconoMenu("mesas.svg"));
         
-        // redondeo del banner superior
         pnlBanner.putClientProperty("FlatLaf.style", "arc: 22");
 
-        // estilo pastilla para el badge del rol
         lblRolBadge.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblRolBadge.putClientProperty("FlatLaf.style", "arc: 999");
         
-        // estilo pastilla para las etiquetas de estado de la cola
         lblSiguienteActual.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblSiguienteActual.putClientProperty("FlatLaf.style", "arc: 999");
 
         lblEnEsperaBadge.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 14, 4, 14));
         lblEnEsperaBadge.putClientProperty("FlatLaf.style", "arc: 999");
 
-        // bordes redondeados en paneles contenedores
         pnlRegistro.putClientProperty("FlatLaf.style", "arc: 16; border: 1,1,1,1,#D8C3A0");
         pnlCola.putClientProperty("FlatLaf.style", "arc: 16; border: 1,1,1,1,#D8C3A0");
 
-        // bordes redondeados en controles de entrada
         txtNombreCliente.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0");
         cmbPrioridad.putClientProperty("FlatLaf.style", "arc: 10; borderColor: #D8C3A0");
 
-        // bordes redondeados en botones de accion
         JButton[] botonesAccion = { btnIncluir, btnAtender, btnVerSiguiente, btnCargarPrueba };
         for (JButton btn : botonesAccion) {
             btn.putClientProperty("FlatLaf.style", "arc: 12; borderWidth: 1; borderColor: #D8C3A0");
         }
 
-        // cabecera y filas alternadas en la tabla de cola
         tblCola.getTableHeader().setBackground(new Color(234, 217, 188));
         tblCola.getTableHeader().putClientProperty("FlatLaf.style", "background: #EAD9BC");
         tblCola.putClientProperty("FlatLaf.style", "background: #FFFDF8; alternateRowColor: #FAF0DE");
         
-        // boton de cerrar sesion redondeado
         btnCerrarSesion.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
         btnVolver.putClientProperty("FlatLaf.style", "arc: 14; borderWidth: 0; focusWidth: 0");
         
         btnCerrarSesion.addActionListener(e -> cerrarSesion());
-        
-        // navegacion de regreso y cierre de sesion
         btnVolver.addActionListener(e -> volverAlMenu());
 
-        // datos de sesion activa
         actualizarSesionUI();
-
-        // configuracion de tabla no editable
         configurarTabla();
-
-        // conexion de eventos de botones
         conectarEventos();
-
-        // sincronizacion de datos con la vista
         refrescarVista();
     }
 
-    // icono blanco para los botones del menu lateral
     private FlatSVGIcon iconoMenu(String nombreArchivo) {
         FlatSVGIcon icono = new FlatSVGIcon(nombreArchivo, 20, 20);
         icono.setColorFilter(new FlatSVGIcon.ColorFilter(color -> Color.WHITE));
         return icono;
     }
 
-
-    /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this method is always regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -591,7 +558,6 @@ public class FrmAtencion extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    // actualiza las etiquetas del usuario y rol activo en la cabecera
     private void actualizarSesionUI() {
         if (oUsuario != null) {
             lblUsuarioActivo.setText(oUsuario.getUsuario());
@@ -603,7 +569,6 @@ public class FrmAtencion extends javax.swing.JFrame {
         }
     }
 
-    // configura el modelo de datos de la tabla de cola haciendola no editable
     private void configurarTabla() {
         modeloTabla = new DefaultTableModel(
             new Object[][] {},
@@ -618,7 +583,6 @@ public class FrmAtencion extends javax.swing.JFrame {
         tblCola.setModel(modeloTabla);
     }
 
-    // enlaza los eventos de accion a los botones del formulario y menu
     private void conectarEventos() {
         btnIncluir.addActionListener(e -> registrarTurno());
         btnAtender.addActionListener(e -> atenderCliente());
@@ -634,7 +598,6 @@ public class FrmAtencion extends javax.swing.JFrame {
             dispose();
         });
         btnAtencion.addActionListener(e -> {
-            // Modulo activo actualmente
         });
         btnComprobantes.addActionListener(e -> abrirComprobantes());
         btnBuscar.addActionListener(e -> {
@@ -647,7 +610,6 @@ public class FrmAtencion extends javax.swing.JFrame {
         });
     }
 
-    // valida y registra un nuevo turno en la cola de atencion
     private void registrarTurno() {
         String nombre = txtNombreCliente.getText().trim();
         Prioridad prioridad = Prioridad.REGULAR;
@@ -669,7 +631,6 @@ public class FrmAtencion extends javax.swing.JFrame {
         }
     }
 
-    // atiende y desencola al cliente al frente de la cola con atencion prioritaria
     private void atenderCliente() {
         String err = controlador.atender();
         if (!err.isEmpty()) {
@@ -693,7 +654,6 @@ public class FrmAtencion extends javax.swing.JFrame {
         }
     }
 
-    // consulta sin remover al proximo cliente al frente de la cola
     private void verSiguiente() {
         ClienteAtencion siguiente = controlador.verSiguiente();
         if (siguiente == null) {
@@ -717,7 +677,6 @@ public class FrmAtencion extends javax.swing.JFrame {
         }
     }
 
-    // carga clientes de prueba para demostrar la prioridad y orden FIFO
     private void cargarDatosPrueba() {
         String err = controlador.cargarDatosPrueba();
         if (!err.isEmpty()) {
@@ -730,7 +689,6 @@ public class FrmAtencion extends javax.swing.JFrame {
         }
     }
 
-    // sincroniza la tabla y etiquetas con el estado actual de la cola de atencion
     private void refrescarVista() {
         if (modeloTabla == null) {
             modeloTabla = (DefaultTableModel) tblCola.getModel();
@@ -762,7 +720,6 @@ public class FrmAtencion extends javax.swing.JFrame {
         }
     }
 
-    // regresa a la ventana principal conservando la sesion activa
     private void volverAlMenu() {
         if (oUsuario != null) {
             new FrmPrincipal(oUsuario).setVisible(true);
@@ -772,25 +729,23 @@ public class FrmAtencion extends javax.swing.JFrame {
         dispose();
     }
 
-    // cierra la sesion actual y regresa a la ventana de login
     private void cerrarSesion() {
         new FrmLogin().setVisible(true);
         dispose();
     }
 
-    // abre el modulo de comprobantes transfiriendo el usuario en sesion
     private void abrirComprobantes() {
-        new FrmComprobantes(oUsuario).setVisible(true);
+        if (oUsuario != null) {
+            new FrmComprobantes(oUsuario).setVisible(true);
+        } else {
+            new FrmComprobantes().setVisible(true);
+        }
         dispose();
     }
 
-    // aviso informativo para modulos laterales todavia no disponibles
     private void abrirModulo(String nombreModulo) {
     }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         TemaApp.inicializar();
         java.awt.EventQueue.invokeLater(() -> new FrmAtencion().setVisible(true));

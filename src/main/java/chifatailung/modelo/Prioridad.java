@@ -1,6 +1,5 @@
 package chifatailung.modelo;
 
-// niveles de prioridad para la atencion al cliente en el chifa
 public enum Prioridad {
     PREFERENCIAL(1, "Preferencial"),
     REGULAR(2, "Regular");

@@ -3,7 +3,6 @@ package chifatailung.estructuras.listas;
 import chifatailung.modelo.DetallePedido;
 import chifatailung.modelo.Pedido;
 
-// lista enlazada simple 100% iterativa para pedidos segun estilo del profesor
 public class cListaPedidos {
     private cNodoPedido primero, p, nuevo;
     private int cantidad;
@@ -12,11 +11,10 @@ public class cListaPedidos {
         listaVacia();
     }
 
-    // inicializa o reinicia la lista a vacia
     public void listaVacia(){
         primero = null;
         cantidad = 0;
-    } // fin listaVacia
+    }
 
     public cNodoPedido getPrimero(){
         return primero;
@@ -34,7 +32,6 @@ public class cListaPedidos {
         return vacia;
     }
 
-    // inserta un nuevo pedido al final de la lista de forma iterativa validando unicidad de numero
     public boolean insertar(Pedido valor){
         boolean insertado = false;
         if(valor != null && valor.getNumero() != null && !valor.getNumero().trim().isEmpty() && buscar(valor.getNumero().trim()) == null){
@@ -43,6 +40,7 @@ public class cListaPedidos {
                 primero = nuevo;
             } else {
                 p = primero;
+                // avanza hasta el ultimo nodo para enlazar el nuevo
                 while(p.getSig() != null){
                     p = p.getSig();
                 }
@@ -52,9 +50,8 @@ public class cListaPedidos {
             insertado = true;
         }
         return insertado;
-    } // fin insertar
+    }
 
-    // busca por identificador y actualiza cliente, mesa y detalles sin alterar el numero original
     public boolean actualizar(String id, Pedido datosNuevos){
         boolean actualizado = false;
         if(id != null && datosNuevos != null){
@@ -81,9 +78,8 @@ public class cListaPedidos {
             }
         }
         return actualizado;
-    } // fin actualizar
+    }
 
-    // elimina el pedido coincidente reacomodando enlaces de forma iterativa
     public boolean eliminar(String id){
         boolean eliminado = false;
         if(primero != null && id != null){
@@ -98,6 +94,7 @@ public class cListaPedidos {
                 while(p != null && !eliminado){
                     if(p.getValor() != null && p.getValor().getNumero() != null
                             && p.getValor().getNumero().equalsIgnoreCase(id.trim())){
+                        // reacomoda enlaces para desvincular el nodo
                         ant.setSig(p.getSig());
                         cantidad--;
                         eliminado = true;
@@ -109,9 +106,8 @@ public class cListaPedidos {
             }
         }
         return eliminado;
-    } // fin eliminar
+    }
 
-    // busqueda iterativa por identificador que retorna el pedido o null
     public Pedido buscar(String id){
         Pedido encontrado = null;
         if(id != null && primero != null){
@@ -125,9 +121,8 @@ public class cListaPedidos {
             }
         }
         return encontrado;
-    } // fin buscar
+    }
 
-    // devuelve un arreglo exacto Pedido[] con los pedidos registrados para JTable
     public Pedido[] listar(){
         Pedido resultado[];
         if(primero == null || cantidad == 0){
@@ -143,9 +138,8 @@ public class cListaPedidos {
             }
         }
         return resultado;
-    } // fin listar
+    }
 
-    // calcula el total general acumulando iterativamente el total de cada pedido
     public double totalGeneral(){
         double total = 0.0;
         p = primero;
@@ -156,9 +150,8 @@ public class cListaPedidos {
             p = p.getSig();
         }
         return total;
-    } // fin totalGeneral
+    }
 
-    // acumula en cadena los pedidos con separador " - " para visualizacion en consola
     public String muestraLista(){
         p = primero;
         String cadena = "";
@@ -173,5 +166,5 @@ public class cListaPedidos {
             p = p.getSig();
         }
         return cadena;
-    } // fin muestraLista
+    }
 }

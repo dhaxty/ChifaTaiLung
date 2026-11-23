@@ -3,7 +3,6 @@ package chifatailung.controlador;
 import chifatailung.modelo.Rol;
 import chifatailung.modelo.Usuario;
 
-// controlador de inicio de sesion para conectar FrmLogin con el servicio
 public class AuthController {
     private AutenticacionService servicio;
     private Usuario usuarioAutenticado;
@@ -18,7 +17,6 @@ public class AuthController {
         this.usuarioAutenticado = null;
     }
 
-    // valida campos y autentica credenciales; devuelve "" si es correcto o el mensaje de error
     public String iniciarSesion(String usuario, String clave){
         String mensaje = "";
         if(usuario == null || usuario.trim().isEmpty()){
@@ -64,7 +62,6 @@ public class AuthController {
         return servicio;
     }
 
-    // las cuentas de prueba vienen listas en el servicio de autenticacion
     public String cargarDatosPrueba(){
         return "";
     }

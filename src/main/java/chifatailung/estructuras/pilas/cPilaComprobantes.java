@@ -2,7 +2,6 @@ package chifatailung.estructuras.pilas;
 
 import chifatailung.modelo.Comprobante;
 
-// pila estatica sobre arreglo de comprobantes siguiendo el estilo cPila del profesor
 public class cPilaComprobantes {
     private Comprobante pila[];
     private int tope;
@@ -18,13 +17,12 @@ public class cPilaComprobantes {
         pilaVacia();
     }
 
-    // restablece el tope en -1 y limpia las referencias a objetos
     public void pilaVacia(){
         tope = -1;
         for(int i = 0; i <= indMax; i++){
             pila[i] = null;
         }
-    } // fin pilaVacia
+    }
 
     public int getTope(){
         return tope;
@@ -54,38 +52,36 @@ public class cPilaComprobantes {
         return llena;
     }
 
-    // apila si no excede indMax; devuelve true si pudo apilar y false si esta llena
     public boolean insertar(Comprobante valor){
         boolean insertado = false;
         if(valor != null && tope < indMax){
+            // incrementa el tope y almacena el elemento
             tope++;
             pila[tope] = valor;
             insertado = true;
         }
         return insertado;
-    } // fin insertar
+    }
 
-    // desapila el comprobante del tope y lo devuelve; retorna null si la pila esta vacia
     public Comprobante eliminar(){
         Comprobante valor = null;
         if(tope > -1){
+            // obtiene el elemento del tope y decrementa
             valor = pila[tope];
             pila[tope] = null;
             tope--;
         }
         return valor;
-    } // fin eliminar
+    }
 
-    // consulta el comprobante en la cima sin desapilar; retorna null si esta vacia
     public Comprobante accesar(){
         Comprobante valor = null;
         if(tope > -1){
             valor = pila[tope];
         }
         return valor;
-    } // fin accesar
+    }
 
-    // busca secuencialmente un comprobante por su codigo o numero identificador
     public Comprobante buscar(String numero){
         Comprobante encontrado = null;
         if(numero != null && tope > -1){
@@ -98,9 +94,8 @@ public class cPilaComprobantes {
             }
         }
         return encontrado;
-    } // fin buscar
+    }
 
-    // devuelve un arreglo exacto con los comprobantes activos para alimentar JTable
     public Comprobante[] listar(){
         Comprobante resultado[];
         if(tope == -1){
@@ -112,9 +107,8 @@ public class cPilaComprobantes {
             }
         }
         return resultado;
-    } // fin listar
+    }
 
-    // acumula en cadena los comprobantes con separador " - " para visualizacion en consola
     public String muestraArreglo(){
         String cadena = "";
         for(int i = 0; i <= tope; i++){
@@ -125,5 +119,5 @@ public class cPilaComprobantes {
             }
         }
         return cadena;
-    } // fin muestraArreglo
+    }
 }

@@ -1,6 +1,5 @@
 package chifatailung.modelo;
 
-// entidad cliente en espera de atencion en el chifa con turno y prioridad
 public class ClienteAtencion {
     private int numeroTurno;
     private String nombreCliente;

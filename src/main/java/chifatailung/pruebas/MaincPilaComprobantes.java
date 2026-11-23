@@ -5,7 +5,6 @@ import chifatailung.estructuras.pilas.cPilaComprobantes;
 import chifatailung.modelo.Comprobante;
 import chifatailung.modelo.Rol;
 
-// prueba de consola para la pila de comprobantes (cPilaComprobantes) y su controlador
 public class MaincPilaComprobantes {
     public static void main(String[] args){
         System.out.println("==========================================================");
@@ -19,7 +18,6 @@ public class MaincPilaComprobantes {
         System.out.println("Accesar en vacio (espera null): " + oPila.accesar());
         System.out.println("Eliminar en vacio (espera null): " + oPila.eliminar());
 
-        // Apilar comprobantes
         System.out.println("\n--- Apilando 3 comprobantes iniciales ---");
         oPila.insertar(new Comprobante("B001-000001", "Chaufa de Pollo + Sopa Wantan", "Boleta", 32.50));
         oPila.insertar(new Comprobante("B001-000002", "Aeropuerto Especial + Gaseosa", "Boleta", 38.00));
@@ -30,13 +28,11 @@ public class MaincPilaComprobantes {
         System.out.println("Contenido actual de la pila:");
         System.out.println(oPila.muestraArreglo());
 
-        // Consultar tope sin desapilar
         System.out.println("\n--- Consulta de cima con accesar() ---");
         Comprobante topeObj = oPila.accesar();
         System.out.println("Tope consultado: " + (topeObj != null ? topeObj.getNumero() + " (" + topeObj.getConcepto() + ")" : "null"));
         System.out.println("Cantidad tras accesar (debe seguir en 3): " + oPila.getCantidad());
 
-        // Desapilar (LIFO)
         System.out.println("\n--- Desapilando con eliminar() (comportamiento LIFO) ---");
         Comprobante desapilado1 = oPila.eliminar();
         System.out.println("1er Desapilado (espera F001-000001): " + (desapilado1 != null ? desapilado1.getNumero() : "null"));
@@ -50,7 +46,6 @@ public class MaincPilaComprobantes {
         System.out.println("¿Esta vacia ahora?: " + oPila.estaVacia());
         System.out.println("Eliminar en pila vacia (espera null, sin excepcion): " + oPila.eliminar());
 
-        // Prueba de llenado a capacidad maxima (50) y rechazo del 51
         System.out.println("\n--- Probando llenado hasta capacidad maxima (50/50) ---");
         for(int i = 1; i <= 50; i++){
             String num = String.format("B002-%06d", i);
@@ -68,7 +63,6 @@ public class MaincPilaComprobantes {
         System.out.println("Resultado de insertar elemento 51 (espera false): " + insert51);
         System.out.println("Cantidad tras intento 51 (debe seguir en 50): " + oPila.getCantidad());
 
-        // Restablecer pila
         oPila.pilaVacia();
         System.out.println("Tras pilaVacia() -> Cantidad: " + oPila.getCantidad() + ", ¿Esta vacia?: " + oPila.estaVacia());
 
@@ -80,7 +74,6 @@ public class MaincPilaComprobantes {
         System.out.println("Controlador instanciado con Rol: " + cAdmin.getRolActual());
         System.out.println("¿Tiene permiso?: " + cAdmin.tienePermiso());
 
-        // Validaciones de entrada
         System.out.println("\n--- Probando validaciones de entrada ---");
         String errNumVacio = cAdmin.registrar("", "Consumo", "Boleta", 50.0);
         System.out.println("Numero vacio (espera mensaje): " + errNumVacio);
@@ -94,25 +87,20 @@ public class MaincPilaComprobantes {
         String errImpNeg = cAdmin.registrar("B003-000001", "Consumo", "Boleta", -15.0);
         System.out.println("Importe negativo (espera mensaje): " + errImpNeg);
 
-        // Registro exitoso
         String exito1 = cAdmin.registrar("B003-000001", "Tallarin Saltado Especial", "Boleta", 35.00);
         System.out.println("Registro exitoso 1 (espera vacio): '" + exito1 + "'");
 
-        // Validacion de duplicado
         String errDup = cAdmin.registrar("B003-000001", "Otro Consumo", "Boleta", 40.00);
         System.out.println("Registro duplicado (espera mensaje): " + errDup);
 
-        // Registro de un segundo comprobante
         cAdmin.registrar("F003-000001", "Consumo Corporativo Reunion", "Factura", 120.00);
         System.out.println("Total importes acumulado: S/." + String.format(java.util.Locale.US, "%.2f", cAdmin.totalImportes()));
 
-        // Desapilar mediante controlador
         System.out.println("Tope antes de desapilar: " + cAdmin.accesar().getNumero());
         String errDesapilar = cAdmin.desapilar();
         System.out.println("Desapilar exitoso (espera vacio): '" + errDesapilar + "'");
         System.out.println("Nuevo tope tras desapilar: " + cAdmin.accesar().getNumero());
 
-        // Cargar datos de prueba
         System.out.println("\n--- Probando cargarDatosPrueba() ---");
         String resPrueba = cAdmin.cargarDatosPrueba();
         System.out.println("Resultado cargarDatosPrueba (espera vacio): '" + resPrueba + "'");
@@ -126,14 +114,12 @@ public class MaincPilaComprobantes {
                     + lista[i].getTipo() + " | " + lista[i].getConcepto() + " | S/." + lista[i].getImporte());
         }
 
-        // Prueba con Rol EMPLEADO (debe tener acceso segun seccion 4)
         System.out.println("\n--- Probando controlador con Rol EMPLEADO ---");
         ComprobanteController cEmpleado = new ComprobanteController(Rol.EMPLEADO);
         System.out.println("¿Empleado tiene permiso?: " + cEmpleado.tienePermiso());
         String resEmp = cEmpleado.registrar("B004-000001", "Sopa Fuchifu Familiar", "Boleta", 28.00);
         System.out.println("Registro por empleado (espera vacio): '" + resEmp + "'");
 
-        // Prueba con Rol nulo
         ComprobanteController cInvalido = new ComprobanteController(null);
         String errNullRol = cInvalido.registrar("B005-000001", "Test", "Boleta", 10.0);
         System.out.println("Registro con rol nulo (espera acceso denegado): " + errNullRol);

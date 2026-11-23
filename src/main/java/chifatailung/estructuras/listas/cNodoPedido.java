@@ -2,7 +2,6 @@ package chifatailung.estructuras.listas;
 
 import chifatailung.modelo.Pedido;
 
-// nodo dinamico para lista enlazada simple segun estilo cNodo del profesor
 public class cNodoPedido {
     private Pedido valor;
     private cNodoPedido sig;

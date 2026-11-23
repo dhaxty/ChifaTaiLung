@@ -2,7 +2,6 @@ package chifatailung.estructuras.arboles;
 
 import chifatailung.modelo.Plato;
 
-// nodo del arbol binario de busqueda para platos de la carta (adaptado de cNodo del profesor)
 public class cNodoABB {
     private Plato valor;
     private cNodoABB izq, der;

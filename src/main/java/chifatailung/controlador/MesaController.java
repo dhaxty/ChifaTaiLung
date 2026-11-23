@@ -5,7 +5,6 @@ import chifatailung.modelo.EstadoMesa;
 import chifatailung.modelo.Mesa;
 import chifatailung.modelo.Rol;
 
-// controlador para la administracion de mesas con validaciones y permisos por rol
 public class MesaController {
     private Rol rolActual;
     private cMatrizMesas oMatriz;
@@ -28,7 +27,7 @@ public class MesaController {
         return oMatriz;
     }
 
-    // segun matriz de permisos, tanto ADMIN como EMPLEADO gestionan mesas
+    // admin y empleado pueden gestionar mesas
     public boolean puedeModificar(){
         boolean puede = false;
         if(rolActual == Rol.ADMIN || rolActual == Rol.EMPLEADO){
@@ -37,17 +36,14 @@ public class MesaController {
         return puede;
     }
 
-    // devuelve la matriz de mesas completa para renderizar el salon
     public Mesa[][] listar(){
         return oMatriz.listar();
     }
 
-    // obtiene la mesa de una coordenada especifica de la matriz
     public Mesa obtener(int fila, int columna){
         return oMatriz.obtener(fila, columna);
     }
 
-    // busca una mesa por su identificador numerico
     public Mesa buscar(int numero){
         Mesa mesa = null;
         if(numero >= 1 && numero <= oMatriz.getTotalMesas()){
@@ -56,7 +52,6 @@ public class MesaController {
         return mesa;
     }
 
-    // valida permisos, rango y estado antes de actualizar; retorna vacio si fue exitoso
     public String cambiarEstado(int numero, EstadoMesa nuevoEstado){
         String mensaje = "";
         if(!puedeModificar()){
@@ -74,7 +69,6 @@ public class MesaController {
         return mensaje;
     }
 
-    // conteos para indicadores de ocupacion del salon
     public int contar(EstadoMesa estado){
         return oMatriz.contar(estado);
     }
@@ -91,7 +85,6 @@ public class MesaController {
         return oMatriz.contar(EstadoMesa.RESERVADA);
     }
 
-    // restablece todas las mesas del chifa al estado LIBRE
     public String reiniciarMesas(){
         String mensaje = "";
         if(!puedeModificar()){
@@ -102,22 +95,18 @@ public class MesaController {
         return mensaje;
     }
 
-    // carga una distribucion de prueba con mesas libres, ocupadas y reservadas
     public String cargarDatosPrueba(){
         String mensaje = "";
         if(!puedeModificar()){
             mensaje = "Acceso denegado: no cuenta con permisos para cargar datos.";
         } else {
-            // reinicia a libre primero
             oMatriz.matrizVacia();
 
-            // mesas ocupadas simulando consumo en el chifa
             oMatriz.cambiarEstado(2, EstadoMesa.OCUPADA);
             oMatriz.cambiarEstado(5, EstadoMesa.OCUPADA);
             oMatriz.cambiarEstado(8, EstadoMesa.OCUPADA);
             oMatriz.cambiarEstado(11, EstadoMesa.OCUPADA);
 
-            // mesas reservadas con anticipacion
             oMatriz.cambiarEstado(3, EstadoMesa.RESERVADA);
             oMatriz.cambiarEstado(7, EstadoMesa.RESERVADA);
             oMatriz.cambiarEstado(14, EstadoMesa.RESERVADA);

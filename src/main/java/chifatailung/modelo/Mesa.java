@@ -1,6 +1,5 @@
 package chifatailung.modelo;
 
-// entidad mesa con ubicacion en la matriz, capacidad y estado de atencion
 public class Mesa {
     private int numero, capacidad, fila, columna;
     private EstadoMesa estado;

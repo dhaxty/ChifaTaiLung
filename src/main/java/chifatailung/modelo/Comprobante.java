@@ -1,6 +1,5 @@
 package chifatailung.modelo;
 
-// entidad comprobante simulado de consumo en el chifa (boleta o factura, no tributario)
 public class Comprobante {
     private String numero, concepto, tipo;
     private double importe;

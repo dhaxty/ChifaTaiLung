@@ -1,6 +1,5 @@
 package chifatailung.modelo;
 
-// item individual que compone un pedido de consumo en el chifa
 public class DetallePedido {
     private String codigoPlato, nombrePlato;
     private int cantidad;
@@ -16,7 +15,6 @@ public class DetallePedido {
         this.precioUnitario = precioUnitario;
     }
 
-    // calcula el subtotal de la linea sin acoplarse a cArregloPlatos
     public double calcularSubtotal(){
         return cantidad * precioUnitario;
     }
